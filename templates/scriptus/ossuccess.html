@@ -1,0 +1,19 @@
+{% extends 'scriptus/sw_base.html' %}
+
+{% block sw_content %}
+<h1>Congratulations ! You have successfully imported {{ results|length }} !
+</h1> 
+
+<p> The following characters have been imported successfully <p>
+  <table>
+    <th><td>Whole name</td><td>Nickname</td><td>Gender</td></th>
+    {% for chara in results.charaters %}
+    <tr>
+      <td>{{chara.chara_whole_name}}</td>
+      <td>{{chara.chara_nickname}}</td>
+      <td>{{chara.chara_gender}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
+
