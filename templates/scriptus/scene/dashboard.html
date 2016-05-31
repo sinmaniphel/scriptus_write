@@ -1,0 +1,28 @@
+{% extends 'scriptus/sw_base.html' %}
+{% load bootstrap3 %}
+{# Load CSS and JavaScript #}
+
+{# Load the remaining static files #}
+{% load staticfiles %}
+
+{% block sw_extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/vis/dist/vis.css' %}" />
+
+{% endblock %}
+
+{% block sw_content %}
+
+<div id="sw_timeline"></div>
+{% endblock %}
+
+{% block bootstrap3_extra_script %}
+<script src="{% static 'vendor/vis/dist/vis.js' %}" ></script>
+<script src="{% static 'scriptus/js/sw_storyboard.js' %}" ></script>
+<script type="text/javascript">
+  {% autoescape off %}
+     var data = jQuery.parseJSON('{{ scenes.timed|escapejs }}')
+  {% endautoescape %}
+  init_timeline('#sw_timeline',data);
+</script>
+
+{% endblock %}

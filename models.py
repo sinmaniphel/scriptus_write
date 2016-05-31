@@ -37,7 +37,7 @@ class Content(models.Model):
 
 
 class FramedInTime(models.Model):
-    timeframe = models.ForeignKey(
+    timefraime = models.ForeignKey(
         TimeFrame,
         related_name='%(class)s_fit_related',
         on_delete=models.PROTECT)
