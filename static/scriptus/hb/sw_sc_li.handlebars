@@ -1,0 +1,20 @@
+<a class="list-group-item sw_dated_scene_item sw_scene_item"
+  data-scid="{{ scene.id }}"
+  data-title="{{ scene.title }}"
+  {{#if scene.start }}
+  data-start="{{ scene.start }}"
+  data-end="{{ scene.end }}"
+  {{/if}}
+  data-url="{% url 'scene_json' %}"}
+  >
+      
+  <h4 class="list-group-item-heading">{{scene.title}}</h4>
+  <p class="list-group-item-text">
+      {{#if scene.start }}
+      Start : {{ scene.start }} - End : {{ scene.end }}
+      {{else}}
+      Not dated yet
+      {{/if}}
+      
+  </p>
+</a>
