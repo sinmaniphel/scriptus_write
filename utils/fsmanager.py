@@ -3,6 +3,11 @@ from enum import Enum
 import os
 
 
+def get_string_content(content):
+    f_content = open(content.cont_url, 'r')
+    return f_content.read()
+
+
 class ScriptusFSException(Exception):
 
     def __init__(self, message):

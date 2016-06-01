@@ -9,8 +9,8 @@ def convert_scene_to_vis(scene):
     sc_dict['content'] = scene.scene_title
     sc_dict['start'] = str(scene.timeframe.tf_start)
     end = scene.timeframe.tf_end
-    # if end is not None:
-    #    sc_dict['end'] = str(end)
+    if end is not None:
+        sc_dict['end'] = str(end)
     return sc_dict
 
 

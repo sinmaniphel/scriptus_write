@@ -1,0 +1,11 @@
+.vis-item .vis-item-overflow {
+  overflow: visible;
+}
+body {
+  padding-top: 50px;
+}
+
+.sw_sb_content {
+  padding: 40px 15px;
+  text-align: center;
+}

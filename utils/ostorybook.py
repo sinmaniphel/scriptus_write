@@ -244,7 +244,7 @@ class OStoryBookLoader:
         tf = mods.TimeFrame(tf_name="scene_tf#{}".format(int_id))
         # adding one hour
         if timestamp is not None:
-            end_date = timestamp + dt.timedelta(0, 1)
+            end_date = timestamp + dt.timedelta(0, 3600)
             tf.tf_start = timestamp
             tf.tf_end = end_date
         tf.save()

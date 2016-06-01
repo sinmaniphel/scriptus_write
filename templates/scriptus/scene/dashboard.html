@@ -2,27 +2,149 @@
 {% load bootstrap3 %}
 {# Load CSS and JavaScript #}
 
+{% load sw_extra %}
 {# Load the remaining static files #}
 {% load staticfiles %}
 
+
 {% block sw_extra_head %}
 <link rel="stylesheet" type="text/css" href="{% static 'vendor/vis/dist/vis.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'scriptus/css/sw_storyboard.css' %}" />
+ <link rel="stylesheet" href="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" />
+<!-- link rel="stylesheet" type="text/css" href="{% static 'vendor/bootcards/dist/css/bootcards-android.min.css' %}" /-->
 
 {% endblock %}
 
 {% block sw_content %}
+<div class="row sw_sb_content">
+  <h1>Storyboard for story {{story}}</h1>
+  <div id="sw_timeline"></div>
+</div>
+<div class="row">
+  <div class="col-sm-5 ">
+    <div class="scene-list">
+      <div class="panel panel-default">
+	<div class="list-group" id="scene_list">
+	  <li class="list-group-item">
+	    <div class="btn-group" role="group">
+	      <button type="button"
+		    class="btn btn-default dropdown-toggle"
+		    data-toggle="dropdown"
+		    aria-haspopup="true"
+		    aria-expanded="false">
+		Show...
+		<span class="caret"></span>
+	      </button>
+	      <ul class="dropdown-menu">
+		<li><a href="#">All scences</a></li>
+		<li><a href="#">Dated only</a></li>
+		<li><a href="#">Without date</a></li>
+	      </ul>
+	    </div>
+	    <button class="btn pull-right btn-danger ">New</button>
 
-<div id="sw_timeline"></div>
+	  </li>
+	  <li class="list-group-item">     
+	    <div class="input-group">
+	      <span class="input-group-addon glyphicon glyphicon-search" id="basic-addon1"></span>
+	      <input type="text" class="form-control" placeholder="Scene name..." aria-describedby="basic-addon1" onkeyup="filter(this)"></input>
+	    </div>
+	    
+	  </li>
+	  {% for scene in scenes.timed %}
+	  <a class="list-group-item sw_dated_scene_item sw_scene_item"
+	     data-scid="{{ scene.id }}"
+	     data-start="{{ scene.timeframe.tf_start }}"
+	     data-end="{{ scene.timeframe.tf_end }}"
+	     data-url="{% url 'scene_json' %}"}
+	     >
+      
+            <h4 class="list-group-item-heading">{{scene.scene_title}}</h4>
+            <p class="list-group-item-text">
+	      Start : {{ scene.timeframe.tf_start }} - End : {{ scene.timeframe.tf_end }}
+	    </p>
+	  </a>
+	  {% endfor %}
+	  {% for scene in scenes.untimed %}
+	  <a class="list-group-item sw_scene_item"
+	     data-scid="{{ scene.id }}"
+	     data-url="{% url 'scene_json' %}"}
+	     >
+      
+            <h4 class="list-group-item-heading">{{scene.scene_title}}</h4>
+            <p class="list-group-item-text">No time yet</p>
+	  </a>
+      {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-7">
+    {% with scenes.timed|first as fst_scene %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+	<h3 class="panel-title" id="scene_title">{{ fst_scene.scene_title }}</h3>
+      </div>
+      <div class="panel-body" id="sc_date_content" >
+	<span class="label label-success" id="sc_dt_start">{{ fst_scene.timeframe.tf_start }}</span>
+	<span class="label label-danger" id="sc_dt_end">{{ fst_scene.timeframe.tf_end }}</span>
+
+      </div>
+      	<ul class="list-group">
+	  <li class="list-group-item" id="scene_content">{% autoescape off %}
+	  {{ fst_scene|description }}
+	  {% endautoescape %}</li>
+ 	</ul>
+
+    </div>
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+	<h3 class="panel-title">Panel title</h3>
+      </div>
+      <div class="panel-body">
+	Panel content
+      </div>
+    </div>
+    {% endwith %}
+  </div>
+</div>
 {% endblock %}
 
 {% block bootstrap3_extra_script %}
+<!-- HANDLEBAR Templates -->
+
+<!-- vendor scripts -->
+<!-- moment which takes a moment to load -->
+<script type="text/javascript" src="{% static 'vendor/moment/min/moment-with-locales.min.js' %}"></script>
+
+<!-- vis js for visualisations and timeline -->
 <script src="{% static 'vendor/vis/dist/vis.js' %}" ></script>
+
+<!-- bootstrap datetime picker, for elegant time selection -->
+
+<!--script type="text/javascript" src="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script -->
+
+<!-- handlebars --> 
+<script type="text/javascript" src="{% static 'vendor/handlebars/handlebars.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'vendor/handlebars/handlebars.runtime.js' %}"></script>
+
+<!-- handlebar templates -->
+
+<script id="entry-template" type="text/x-handlebars-template" src="{% static 'scriptus/hb/sw_storyboard.hb' %}">
+</script>
+
+<!-- main script content -->
 <script src="{% static 'scriptus/js/sw_storyboard.js' %}" ></script>
+
 <script type="text/javascript">
   {% autoescape off %}
-     var data = jQuery.parseJSON('{{ scenes.timed|escapejs }}')
+     var data = jQuery.parseJSON('{{ scenes.timed_vis|escapejs }}');
   {% endautoescape %}
-  init_timeline('#sw_timeline',data);
+  tl = init_timeline('#sw_timeline',data);
+
+  init();
 </script>
 
 {% endblock %}
