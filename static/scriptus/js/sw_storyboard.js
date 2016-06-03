@@ -34,6 +34,7 @@ class StoryBoardAJax
     ajax_list_scenes(service_url, handler_func)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
+	var err_func = this.handle_error;
 	$.ajax(
 	    {
 		url : service_url, // the endpoint,commonly same url
@@ -41,7 +42,26 @@ class StoryBoardAJax
 		data : { csrfmiddlewaretoken : csrftoken, 
      		       },
 		success: handler_func,
-		error: this.handle_error
+		error: err_func
+	    }
+	);
+
+    }
+
+    ajax_update_scene(scene, service_url, handler_func)
+    {
+	var csrftoken = this._sw_utils.getCsrfToken();
+	var err_func = this.handle_error;
+	var n_scene = {'id': scene.id,
+		       'title': scene.title}
+	$.ajax(
+	    {
+		url : service_url, // the endpoint,commonly same url
+		type : "POST", // http method
+		data : { csrfmiddlewaretoken : csrftoken,
+			 up_scene: n_scene},
+		success: handler_func,
+		error: err_func
 	    }
 	);
 
@@ -67,7 +87,7 @@ class StoryBoardManager {
 	this._timeline_cont = $('#sw_timeline')[0];
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
-	this.list_service_url = service_url;
+	this.urls = service_url;
 
     }
     
@@ -118,13 +138,27 @@ class StoryBoardManager {
 	   
 	}
 	else{
-	    var d_time = this.timeline.getCurrentTime();
-	    var picker = $('#sc_datetimepicker').datetimepicker({
-		sideBySide: true,
-		defaultDate: d_time
-	    });
 	    // picker.data("DateTimePicker").date(d_time);
+	    this.__setup_dt_picker(json);
 	}
+
+    }
+
+    __setup_dt_picker(json) {
+	var d_time = this.timeline.getCurrentTime();
+	var __this = this;
+	var picker = $('#sc_datetimepicker').datetimepicker({
+	    sideBySide: true,
+	    defaultDate: d_time
+	});
+	picker.on('dp.change', function(e) {
+	    // e.date is a moment object
+	    json['start'] = e.date.toJSON();
+	    __this.ajax.ajax_update_scene(json,
+					  __this.urls.update,
+					  __this.init)
+	}
+		 )
 
     }
 
@@ -171,7 +205,7 @@ class StoryBoardManager {
     
     init()
     {
-	this.ajax.ajax_list_scenes(this.list_service_url,
+	this.ajax.ajax_list_scenes(this.urls.list,
 				   this.redraw_scene_list.bind(this)
 				  )
 	    

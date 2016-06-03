@@ -120,7 +120,12 @@
 <script type="text/javascript">
   {% autoescape off %}
   {% endautoescape %}
-  var list_url ='{% url 'scene_list_json' %}';
+  var list_url ={
+  'list': '{% url 'scene_list_json' %}',
+  'update': '{% url 'scene_update_json' %}',
+  'display': '{% url 'scene_json' %}'
+  }
+  ;
   sb_manager = new StoryBoardManager(list_url);
   sb_manager.init();
 
