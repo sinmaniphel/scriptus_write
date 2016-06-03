@@ -61,6 +61,11 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+# node etc
+libs/
+src/
+node_modules
+
 # vendors
 static/vendor
 

@@ -1,0 +1,30 @@
+{
+  "name": "scriptus_write",
+  "title": "Scriptus Write",
+  "description": "Client content for Scriptus Write",
+  "version": "0.1.0",
+  "homepage": "https://github.com/sinmaniphel/scriptus_write",
+  "author": {
+    "name": "aggelos",
+    "email": "sinmaniphel@free.fr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sinmaniphel/scriptus_write.git"
+  },
+  "bugs": "https://github.com/sinmaniphel/scriptus_write/issues",
+  "licenses": [
+    {
+      "type": "Apache",
+      "url": "https://github.com/sinmaniphel/scriptus_write/blob/master/LICENSE-Apache"
+    },
+    {
+      "type": "2.0",
+      "url": "https://github.com/sinmaniphel/scriptus_write/blob/master/LICENSE-2.0"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+  "keywords": []
+}
