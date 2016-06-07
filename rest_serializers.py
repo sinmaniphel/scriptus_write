@@ -5,6 +5,7 @@ from scriptus_write.utils import fsmanager
 
 from scriptus_write.models import Scene
 from scriptus_write.models import Content
+from scriptus_write.models import TimeFrame
 
 import datetime as dt
 
@@ -31,6 +32,12 @@ class ContentSerializer(serializers.HyperlinkedModelSerializer):
         model = Content
 
 
+class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = TimeFrame
+
+
 class SceneSerializer(serializers.HyperlinkedModelSerializer):
 
     description = serializers.SerializerMethodField()
@@ -39,13 +46,52 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
     dt_start = serializers.SerializerMethodField()
     dt_end = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
+
+    timeframe = TimeFrameSerializer()
     # scene_detail = serializers.HyperlinkedRelatedField(
     #   view_name='scene_detail', read_only=True)
 
     class Meta:
         model = Scene
         fields = ('url', 'id', 'scene_title', 'description', 'start',
-                  'end', 'dt_start', 'dt_end', 'content')
+                  'end', 'dt_start', 'dt_end', 'content', 'status', 'timeframe')
+
+    def update(self, scene, validated_data):
+        if 'timeframe' in validated_data:
+            timeframe = validated_data.pop('timeframe')
+            tf_id = scene.timeframe.id
+            TimeFrame.objects.filter(pk=tf_id).update(**timeframe)
+        Scene.objects.filter(pk=scene.id).update(**validated_data)
+        return scene
+
+    def __update_start_time(self, scene, start):
+        tf = None
+        if scene.timeframe is None:
+            tf = TimeFrame.objects.create(
+                tf_name="scene_tf#{}".format(scene.id),
+                tf_start=start,
+                tf_end=start + dt.timedelta(0, 3600)
+            )
+            scene.timeframe = tf
+        else:
+            tf = scene.timeframe
+            tf.tf_start = start
+
+        tf.save()
+
+    def __update_end_time(self, scene, end):
+        tf = None
+        if scene.timeframe is None:
+            tf = TimeFrame.objects.create(
+                tf_name="scene_tf#{}".format(scene.id),
+                tf_end=end,
+                tf_start=end - dt.timedelta(0, 3600)
+            )
+            scene.timeframe = tf
+        else:
+            tf = scene.timeframe
+            tf.tf_end = end
+        tf.save()
 
     def get_description(self, obj):
         #story = obj.story

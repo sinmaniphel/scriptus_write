@@ -9,6 +9,7 @@ router = routers.DefaultRouter()
 router.register(r'users', rest.UserViewSet)
 router.register(r'groups', rest.GroupViewSet)
 router.register(r'scenes', rest.SceneViewSet)
+router.register(r'timeframes', rest.TimeFrameViewSet)
 
 urlpatterns = [
     url(r'^$', html.index, name='index'),

@@ -3,8 +3,10 @@
 
 
 from scriptus_write.models import Scene
+from scriptus_write.models import TimeFrame
 
 from scriptus_write.rest_serializers import SceneSerializer
+from scriptus_write.rest_serializers import TimeFrameSerializer
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
@@ -26,6 +28,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+
+class TimeFrameViewSet(viewsets.ModelViewSet):
+
+    queryset = TimeFrame.objects.all().order_by('tf_start')
+    serializer_class = TimeFrameSerializer
 
 
 class SceneViewSet(viewsets.ModelViewSet):

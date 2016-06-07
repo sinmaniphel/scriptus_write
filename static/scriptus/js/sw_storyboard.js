@@ -49,15 +49,14 @@ class StoryBoardAJax
     ajax_update_scene(scene, service_url, handler_func)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
-	var err_func = this.handle_error;
-	var n_scene = {'id': scene.id,
-		       'title': scene.title}
+	var err_func = this._handle_error;
 	$.ajax(
 	    {
-		url : service_url, // the endpoint,commonly same url
-		type : "POST", // http method
-		data : { csrfmiddlewaretoken : csrftoken,
-			 up_scene: n_scene},
+		url : scene.url, // the endpoint,commonly same url
+		type : "PUT", // http method
+		dataType   : 'json',
+		contentType: 'application/json; charset=UTF-8',
+		data : JSON.stringify(scene),
 		success: handler_func,
 		error: err_func
 	    }
@@ -85,7 +84,7 @@ class StoryBoardManager {
 	this._timeline_cont = $('#sw_timeline')[0];
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
-	this.urls = service_url;
+	this.url = service_url;
 
     }
     
@@ -151,10 +150,10 @@ class StoryBoardManager {
 	});
 	picker.on('dp.change', function(e) {
 	    // e.date is a moment object
-	    json['start'] = e.date.toJSON();
+	    json.timeframe.tf_start = e.date.toJSON();
 	    __this.ajax.ajax_update_scene(json,
-					  __this.urls.update,
-					  __this.init)
+					  __this.url,
+					  __this.init.bind(__this))
 	}
 		 )
 
@@ -203,7 +202,7 @@ class StoryBoardManager {
     
     init()
     {
-	this.ajax.ajax_list_scenes(this.urls.list,
+	this.ajax.ajax_list_scenes(this.url,
 				   this.redraw_scene_list.bind(this)
 				  )
 	    
@@ -245,6 +244,44 @@ class SWDjangoUtils {
 		$(this).load(src);
 	    }
 	);			  
+    }
+    
+    csrfSafeMethod(method) {
+	// these HTTP methods do not require CSRF protection
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    sameOrigin(url) {
+	// test that a given url is a same-origin URL
+	// url could be relative or scheme relative or absolute
+	var host = document.location.host; // host + port
+	var protocol = document.location.protocol;
+	var sr_origin = '//' + host;
+	var origin = protocol + sr_origin;
+	// Allow absolute or scheme relative URLs to same origin
+	return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    constructor() {
+	var csrftoken = this.getCsrfToken();
+	var __this = this; 
+	$.ajaxSetup(
+	    {
+	beforeSend: function(xhr, settings) {
+            if (!__this.csrfSafeMethod(settings.type)
+		&& __this.sameOrigin(settings.url)) {
+		// Send the token to same-origin, relative URLs only.
+		// Send the token only if the method warrants CSRF protection
+		// Using the CSRFToken value acquired earlier
+		xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+	}
+	    }
+	
+	);
     }
 
 
