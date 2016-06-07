@@ -1,13 +1,13 @@
   <div class="panel-heading">
-    <h3 class="panel-title" id="scene_title">{{ title }}
+    <h3 class="panel-title" id="scene_title">{{ scene_title }}
     </h3>
   </div>
   <div class="panel-body" id="sc_date_content" >
-    {{#if start }}
+    {{#if timeframe.tf_start }}
        
-      <span class="label label-success" id="sc_dt_start">{{ start }}
+      <span class="label label-success" id="sc_dt_start">{{ timeframe.tf_start }}
       </span>
-      <span class="label label-danger" id="sc_dt_end">{{ end }}
+      <span class="label label-danger" id="sc_dt_end">{{ timeframe.tf_end }}
       </span>
 
     {{else}}

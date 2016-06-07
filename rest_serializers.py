@@ -5,6 +5,7 @@ from scriptus_write.utils import fsmanager
 
 from scriptus_write.models import Scene
 from scriptus_write.models import Content
+from scriptus_write.models import TimeFrame
 
 import datetime as dt
 
@@ -31,6 +32,12 @@ class ContentSerializer(serializers.HyperlinkedModelSerializer):
         model = Content
 
 
+class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = TimeFrame
+
+
 class SceneSerializer(serializers.HyperlinkedModelSerializer):
 
     description = serializers.SerializerMethodField()
@@ -39,13 +46,34 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
     dt_start = serializers.SerializerMethodField()
     dt_end = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
+
+    timeframe = TimeFrameSerializer()
     # scene_detail = serializers.HyperlinkedRelatedField(
     #   view_name='scene_detail', read_only=True)
 
     class Meta:
         model = Scene
         fields = ('url', 'id', 'scene_title', 'description', 'start',
-                  'end', 'dt_start', 'dt_end', 'content')
+                  'end', 'dt_start', 'dt_end', 'content', 'status', 'timeframe')
+
+    def update(self, scene, validated_data):
+        print(validated_data)
+        if 'timeframe' in validated_data:
+            tf = validated_data.pop('timeframe')
+            self.__update_time_frame(scene.timeframe,
+                                     tf)
+        Scene.objects.filter(pk=scene.id).update(**validated_data)
+        return scene
+
+    def __update_time_frame(self, timeframe, v_tf):
+        if 'tf_start' in v_tf:
+            timeframe.tf_start = v_tf['tf_start']
+        if 'tf_end' in v_tf:
+            timeframe.tf_end = v_tf['tf_end']
+        if timeframe.tf_end is None:
+            timeframe.tf_end = timeframe.tf_start + dt.timedelta(0,
+                                                                 3600)
+        timeframe.save()
 
     def get_description(self, obj):
         #story = obj.story

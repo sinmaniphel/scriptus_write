@@ -1,12 +1,12 @@
 # from django.http import JsonResponse
 # import json
 
-# from scriptus_write.utils import visutils as vis
-# from scriptus_write.decorators import json_required
 
 from scriptus_write.models import Scene
+from scriptus_write.models import TimeFrame
 
 from scriptus_write.rest_serializers import SceneSerializer
+from scriptus_write.rest_serializers import TimeFrameSerializer
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
@@ -30,30 +30,13 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
+class TimeFrameViewSet(viewsets.ModelViewSet):
+
+    queryset = TimeFrame.objects.all().order_by('tf_start')
+    serializer_class = TimeFrameSerializer
+
+
 class SceneViewSet(viewsets.ModelViewSet):
 
     queryset = Scene.objects.all()
     serializer_class = SceneSerializer
-
-'''
-@json_required
-def scene_detail(request):
-    if request.method == 'POST':
-        # POST goes here . is_ajax is must to capture ajax requests. Beginner's
-        # pit.
-        scene_id = request.POST.get('scene_id')
-        scene = Scene.objects.get(pk=scene_id)
-        data = vis.convert_scene_to_vis(scene)
-
-        return JsonResponse(data)
-
-
-@json_required
-def scene_list(request):
-    if request.method == 'POST':
-        # POST goes here . is_ajax is must to capture ajax requests. Beginner's
-        # pit.
-        scenes = Scene.objects.all()
-        data = vis.convert_scenes_to_vis(scenes)
-        return JsonResponse(data)
-'''
