@@ -10,20 +10,18 @@ class StoryBoardAJax
     ajax_scene_search_from_elem(elem, handler_func)
     {
 	var r_url = elem.data('url');
-	var scid = elem.data('scid');
-	this.ajax_scene_search( r_url, scid, handler_func);
+	this.ajax_scene_search( r_url, handler_func);
 		
     }
 
-    ajax_scene_search( s_url, sc_id, handler_func )
+    ajax_scene_search( s_url,  handler_func )
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
 	$.ajax(
 	    {
 		url : s_url, // the endpoint,commonly same url
-		type : "POST", // http method
+		type : "GET", // http method
 		data : { csrfmiddlewaretoken : csrftoken, 
-			 scene_id : sc_id,
      		       },
 		success: handler_func,
 		error: this.handle_error
@@ -38,7 +36,7 @@ class StoryBoardAJax
 	$.ajax(
 	    {
 		url : service_url, // the endpoint,commonly same url
-		type : "POST", // http method
+		type : "GET", // http method
 		data : { csrfmiddlewaretoken : csrftoken, 
      		       },
 		success: handler_func,
@@ -131,8 +129,8 @@ class StoryBoardManager {
 	$('#sc_main_panel').html(html);
 
 	if(json['start']) {
-	    timeline.fit(json['scene_id']);
-	    timeline.setSelection(json['scene_id']);
+	    timeline.fit(json['id']);
+	    timeline.setSelection(json['id']);
 	    timeline.setWindow(json['dt_start'],json['dt_end']);
 	    timeline.setCurrentTime(json.start);
 	   
@@ -177,7 +175,7 @@ class StoryBoardManager {
 
 	var first_item = undefined;
 	
-	for(var scene of json.scenes)
+	for(var scene of json.results)
 	{
 	    var item = $(scene_item_tmpl(scene));
 
@@ -194,7 +192,7 @@ class StoryBoardManager {
 		}
 	    )
 	}
-	this.init_timeline(json.scenes.filter(
+	this.init_timeline(json.results.filter(
 	    function(el){
 		return el.start != undefined;
 	    }

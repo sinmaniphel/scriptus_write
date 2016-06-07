@@ -1,54 +1,34 @@
-from django.http import JsonResponse
-import json
+# from django.http import JsonResponse
+# import json
 
-from scriptus_write.utils import visutils as vis
-from scriptus_write.decorators import json_required, post_required
 
 from scriptus_write.models import Scene
 
+from scriptus_write.rest_serializers import SceneSerializer
 
-@json_required
-@post_required
-def scene_detail(request):
-    scene_id = request.POST.get('scene_id')
-    scene = Scene.objects.get(pk=scene_id)
-    data = vis.convert_scene_to_vis(scene)
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
 
-    return JsonResponse(data)
+from scriptus_write.rest_serializers import UserSerializer, GroupSerializer
 
 
-@json_required
-@post_required
-def scene_list(request):
-    scenes = Scene.objects.all()
-    data = vis.convert_scenes_to_vis(scenes)
-    return JsonResponse(data)
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
 
 
-@json_required
-@post_required
-def update_scene(request):
-    if request.is_ajax() is True:
-
-        str_body = request.body.decode('utf-8')
-        print("rq json ! {} |\n-------------".format(str_body))
-
-        rq_json = json.loads(request.body)
-        sc_json = rq_json['up_scene']
-        i_id = sc_json['id']
-        scene = Scene.objects.get(pk=i_id)
-        dt_start = sc_json['start']
-        if dt_start['start'] is not None:
-            __update_time_frame(scene.timeframe, sc_json)
-            scene.save()
-        return JsonResponse({'result': 'success', 'id': i_id})
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
 
 
-def __update_time_frame(tf, sc_json):
-    dt_start = sc_json['start']
-    dt_end = sc_json['end']
-    if dt_end is None:
-        dt_end = dt_start + vis.__one_hour_dt
-    tf.tf_start = dt_start
-    tf.tf_end = dt_end
-    tf.save()
+class SceneViewSet(viewsets.ModelViewSet):
+
+    queryset = Scene.objects.all()
+    serializer_class = SceneSerializer
