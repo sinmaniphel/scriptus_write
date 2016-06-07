@@ -1,6 +1,6 @@
 <a class="list-group-item sw_dated_scene_item sw_scene_item"
   data-scid="{{ id }}"
-  data-title="{{ title }}"
+  data-title="{{ scene_title }}"
   {{#if scene.start }}
   data-start="{{ start }}"
   data-end="{{ end }}"
@@ -8,7 +8,7 @@
   data-url="{{ url }}"
   >
       
-  <h4 class="list-group-item-heading">{{title}}</h4>
+  <h4 class="list-group-item-heading">{{ scene_title}}</h4>
   <p class="list-group-item-text">
       {{#if start }}
       Start : {{ start }} - End : {{ end }}

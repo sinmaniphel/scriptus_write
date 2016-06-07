@@ -32,7 +32,7 @@ class Content(models.Model):
     '''
     Describes a resource containing HTML
     Such a source can be hosted by several ways
-    '''
+    '''res
     cont_description = models.CharField(max_length=512)
     cont_name = models.CharField(max_length=256)
 
