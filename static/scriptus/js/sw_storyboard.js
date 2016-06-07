@@ -46,7 +46,7 @@ class StoryBoardAJax
 
     }
 
-    ajax_update_scene(scene, service_url, handler_func)
+    ajax_update_scene(scene, handler_func)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
 	var err_func = this._handle_error;
@@ -78,10 +78,9 @@ class StoryBoardManager {
 
     constructor(service_url){
 	// PUBLIC
-	this.timeline = null;
 	this.ajax = new StoryBoardAJax();
 	// private
-	this._timeline_cont = $('#sw_timeline')[0];
+	this._tl_manager = new TimeLineManager();
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
 	this.url = service_url;
@@ -90,18 +89,7 @@ class StoryBoardManager {
     
     
     
-    init_timeline(
-	data    )
-    {
-	var items = new vis.DataSet(data);
-
-	var options = {
-	    height: '300px'
-	};
-	this.timeline = new vis.Timeline(this._timeline_cont,data,options);
-	return this.timeline 
-    }
-   
+    
 
     filter_list( element )
     {
@@ -128,10 +116,10 @@ class StoryBoardManager {
 	$('#sc_main_panel').html(html);
 
 	if(json['start']) {
-	    timeline.fit(json['id']);
-	    timeline.setSelection(json['id']);
-	    timeline.setWindow(json['dt_start'],json['dt_end']);
-	    timeline.setCurrentTime(json.start);
+	    this._tl_manager.timeline.fit(json['id']);
+	    this._tl_manager.timeline.setSelection(json['id']);
+	    this._tl_manager.timeline.setWindow(json['dt_start'],json['dt_end']);
+	    this._tl_manager.timeline.setCurrentTime(json.start);
 	   
 	}
 	else{
@@ -142,7 +130,7 @@ class StoryBoardManager {
     }
 
     __setup_dt_picker(json) {
-	var d_time = this.timeline.getCurrentTime();
+	var d_time = this._tl_manager.timeline.getCurrentTime();
 	var __this = this;
 	var picker = $('#sc_datetimepicker').datetimepicker({
 	    sideBySide: true,
@@ -152,12 +140,20 @@ class StoryBoardManager {
 	    // e.date is a moment object
 	    json.timeframe.tf_start = e.date.toJSON();
 	    __this.ajax.ajax_update_scene(json,
-					  __this.url,
 					  __this.init.bind(__this))
 	}
 		 )
 
     }
+
+    _tl_update_hook(event, properties) {
+	var dt = properties.data[0];
+	dt.timeframe.tf_start = dt.start;
+	dt.timeframe.tf_end = dt.end;
+	this.ajax.ajax_update_scene(dt,
+				    this.init.bind(this));
+    }
+
 
     redraw_scene_list(json)
     {
@@ -191,7 +187,9 @@ class StoryBoardManager {
 		}
 	    )
 	}
-	this.init_timeline(json.results.filter(
+	this._tl_manager.update_hook = this._tl_update_hook.bind(this);
+	
+	this._tl_manager.init_timeline(json.results.filter(
 	    function(el){
 		return el.start != undefined;
 	    }
@@ -199,6 +197,7 @@ class StoryBoardManager {
 	first_item.click();
     }
 
+   
     
     init()
     {
@@ -210,6 +209,49 @@ class StoryBoardManager {
 
 
 }
+
+class TimeLineManager {
+
+    constructor() {
+	this.timeline = null;
+	this._timeline_cont = $('#sw_timeline')[0];
+
+	this.update_hook = null;
+	this.delete_hook = null;
+	this.select_hook = null;
+    }
+
+    init_timeline(
+	data    )
+    {
+	var items = new vis.DataSet(data);
+	var _this = this;
+	items.on('update', this.update_hook);
+
+	var options = {
+	    height: '300px',
+	    editable: true,
+	    onUpdate: function(item, callback) {
+		console.log(item)
+	    },
+		
+	};
+	if(this.timeline == undefined) {
+	    this.timeline = new vis.Timeline(this._timeline_cont,
+					     items,
+					     options);
+	}
+	else {
+	    this.timeline.setData(items);
+	    this.timeline.redraw();
+	}
+	return this.timeline;
+    }
+
+   
+    
+}
+
 
 
 class SWDjangoUtils {
