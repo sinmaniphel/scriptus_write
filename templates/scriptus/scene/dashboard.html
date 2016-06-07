@@ -56,7 +56,7 @@
 	     data-scid="{{ scene.id }}"
 	     data-start="{{ scene.timeframe.tf_start }}"
 	     data-end="{{ scene.timeframe.tf_end }}"
-	     data-url="{% url 'scene_json' %}"}
+	     data-url="{% url 'scene-detail' scene.id  %}"}
 	     >
       
             <h4 class="list-group-item-heading">{{scene.scene_title}}</h4>
@@ -120,7 +120,7 @@
 <script type="text/javascript">
   {% autoescape off %}
   {% endautoescape %}
-  var list_url ='{% url 'scene_list_json' %}';
+  var list_url ='{% url 'scene-list' %}';
   sb_manager = new StoryBoardManager(list_url);
   sb_manager.init();
 
