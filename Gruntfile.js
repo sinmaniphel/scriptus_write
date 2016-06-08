@@ -1,5 +1,9 @@
 'use strict';
 
+var Handlebars     = require('handlebars');
+var HandlebarsIntl = require('handlebars-intl');
+HandlebarsIntl.registerWith(Handlebars);
+
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -27,7 +31,7 @@ module.exports = function(grunt) {
 		      var last_part = filepath.split('/').pop();
 		      var t_name = last_part.split('.')[0]
 		      return t_name;
-		  }
+		  },
 	      },
 	      files: {
 		  'static/scriptus/sw_handlebars.js' : [ 'static/scriptus/hb/**/*.handlebars']

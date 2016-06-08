@@ -104,7 +104,11 @@
 <script type="text/javascript" src="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script >
 
 <!-- handlebars --> 
+
 <script src="{% static 'vendor/handlebars/handlebars.runtime.js' %}" ></script>
+<script src="{% static 'vendor/handlebars-helper-intl/dist/handlebars-intl-with-locales.min.js' %}" ></script>
+
+
 <script src="{% static 'scriptus/sw_handlebars.js' %}" ></script>
 
 
@@ -121,7 +125,8 @@
   {% autoescape off %}
   {% endautoescape %}
   var list_url ='{% url 'scene-list' %}';
-  sb_manager = new StoryBoardManager(list_url);
+  var s_timeline_url = '{% url 'scene-timed' %}'
+  sb_manager = new StoryBoardManager(list_url, s_timeline_url);
   sb_manager.init();
 
 </script>

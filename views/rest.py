@@ -1,4 +1,3 @@
-# from django.http import JsonResponse
 # import json
 
 
@@ -10,6 +9,9 @@ from scriptus_write.rest_serializers import TimeFrameSerializer
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
+from rest_framework.decorators import detail_route, list_route
+from rest_framework.response import Response
+
 
 from scriptus_write.rest_serializers import UserSerializer, GroupSerializer
 
@@ -40,3 +42,10 @@ class SceneViewSet(viewsets.ModelViewSet):
 
     queryset = Scene.objects.all()
     serializer_class = SceneSerializer
+
+    @list_route()
+    def timed(self, request):
+        timed_scenes = Scene.objects.exclude(timeframe__tf_start__isnull=True)
+
+        serializer = self.get_serializer(timed_scenes, many=True)
+        return Response(serializer.data)

@@ -16,6 +16,9 @@
   ],
   "dependencies": {
     "eonasdan-bootstrap-datetimepicker": "^4.17.37",
-    "handlebars": "^4.0.5"
+    "handlebars": "^4.0.5",
+    "sweetalert": "^1.1.3",
+    "jquery-dateFormat": "^1.0.2",
+    "handlebars-helper-intl": "^1.1.2"
   }
 }

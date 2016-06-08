@@ -9,13 +9,13 @@ this["ScriptusTemplates"]["sw_sc_li"] = Handlebars.template({"1":function(contai
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1), depth0))
     + "\"\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "      Start : "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1), depth0))
-    + " - End : "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1), depth0))
-    + "\n";
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"long","day":"numeric"},"data":data}))
+    + "\n      <br/>\n      End : "
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"long","day":"numeric"},"data":data}))
+    + "\n      \n";
 },"5":function(container,depth0,helpers,partials,data) {
     return "      Not dated yet\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -37,12 +37,12 @@ this["ScriptusTemplates"]["sw_sc_li"] = Handlebars.template({"1":function(contai
 },"useData":true});
 
 this["ScriptusTemplates"]["sw_sc_main_pannel"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "       \n      <span class=\"label label-success\" id=\"sc_dt_start\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1), depth0))
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"short","day":"numeric"},"data":data}))
     + "\n      </span>\n      <span class=\"label label-danger\" id=\"sc_dt_end\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1), depth0))
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"short","day":"numeric"},"data":data}))
     + "\n      </span>\n\n";
 },"3":function(container,depth0,helpers,partials,data) {
     return "       <div class='input-group date'\n        id='sc_datetimepicker'\n        >\n        <input type='text' class=\"form-control\" />\n        <span class=\"input-group-addon\">\n          <span class=\"glyphicon glyphicon-calendar\"></span>\n        </span>\n      </div>\n   \n";

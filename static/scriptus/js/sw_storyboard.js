@@ -4,7 +4,8 @@ class StoryBoardAJax
     
     constructor()
     {
-	this._sw_utils = new SWDjangoUtils();	
+	this._sw_utils = new SWDjangoUtils();
+	
     }
 
     ajax_scene_search_from_elem(elem, handler_func)
@@ -46,6 +47,7 @@ class StoryBoardAJax
 
     }
 
+  
     ajax_update_scene(scene, handler_func)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
@@ -76,14 +78,15 @@ class StoryBoardAJax
 class StoryBoardManager {
 
 
-    constructor(service_url){
+    constructor(service_url, s_time_url){
 	// PUBLIC
 	this.ajax = new StoryBoardAJax();
 	// private
-	this._tl_manager = new TimeLineManager();
+	this._tl_manager = new TimeLineManager(s_time_url);
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
 	this.url = service_url;
+	HandlebarsIntl.registerWith(Handlebars);
 
     }
     
@@ -189,11 +192,6 @@ class StoryBoardManager {
 	}
 	this._tl_manager.update_hook = this._tl_update_hook.bind(this);
 	
-	this._tl_manager.init_timeline(json.results.filter(
-	    function(el){
-		return el.start != undefined;
-	    }
-	));
 	first_item.click();
     }
 
@@ -201,10 +199,11 @@ class StoryBoardManager {
     
     init()
     {
+	this._tl_manager.refresh_from_server();
 	this.ajax.ajax_list_scenes(this.url,
 				   this.redraw_scene_list.bind(this)
 				  )
-	    
+	
     }
 
 
@@ -212,16 +211,18 @@ class StoryBoardManager {
 
 class TimeLineManager {
 
-    constructor() {
+    constructor(service_url) {
 	this.timeline = null;
 	this._timeline_cont = $('#sw_timeline')[0];
-
+	this.service_url = service_url;
 	this.update_hook = null;
 	this.delete_hook = null;
 	this.select_hook = null;
+	this.service_url = service_url;
+	this.utils = new SWDjangoUtils();
     }
 
-    init_timeline(
+    redraw(
 	data    )
     {
 	var items = new vis.DataSet(data);
@@ -246,6 +247,24 @@ class TimeLineManager {
 	    this.timeline.redraw();
 	}
 	return this.timeline;
+    }
+
+    refresh_from_server() {
+	var csrftoken = this.utils.getCsrfToken();
+	var err_func = this._handle_error;
+	var handler_func = this.redraw.bind(this);
+	$.ajax(
+	    {
+		url : this.service_url, // the endpoint,commonly same url
+		type : "GET", // http method
+		data : { csrfmiddlewaretoken : csrftoken, 
+     		       },
+		success: handler_func,
+		error: err_func
+	    }
+	);
+
+
     }
 
    
