@@ -111,15 +111,20 @@ class StoryBoardManager {
     {
 	this.filter_field = element;
 	var value = $(element).val().toLowerCase();
+	var threshold = 4;
+	if(value.length < threshold)
+	{
+	    delete this.filter_mode['scene_title']
+	    return;
+	}
 
-	$(".sw_scene_item").each(function() {
-            if ($(this).find('h4').text().toLowerCase().search(value) > -1) {
-            $(this).show();
-        }
-        else {
-            $(this).hide();
-        }
-	});
+	this.filter_mode['scene_title'] = value;
+	this.ajax.ajax_list_scenes(
+	    this.url,
+	    this.redraw_scene_list.bind(this),
+	    this.filter_mode);
+	
+	
     }
 
     

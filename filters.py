@@ -10,6 +10,7 @@ class SceneFilter(r_filters.FilterSet):
         ('untimed', 'Timeless'),
         ('all', 'All')
     )
+    scene_title = d_filters.CharFilter(lookup_expr="icontains")
 
     timed = d_filters.MethodFilter()
 
