@@ -9,3 +9,12 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+#sw_sc_pagination {
+    padding: 0 0 0 0;
+}
+
+#sw_sc_pager {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}

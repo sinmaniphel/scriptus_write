@@ -57,3 +57,38 @@ this["ScriptusTemplates"]["sw_sc_main_pannel"] = Handlebars.template({"1":functi
     + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n  </ul>    ";
 },"useData":true});
+
+this["ScriptusTemplates"]["sw_sc_pg"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  <li class=\"previous\" \">\n    <a id=\"sw_sc_prev\"\n      class=\"sw_sc_pg_ctrl\"\n      data-url=\""
+    + container.escapeExpression(((helper = (helper = helpers.previous || (depth0 != null ? depth0.previous : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"previous","hash":{},"data":data}) : helper)))
+    + "\"\n      >\n    \n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return "    <li class=\"disabled\">\n      <a >\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "      \n      <li>\n        <a data-url=\""
+    + alias2(alias1((depth0 != null ? depth0.url : depth0), depth0))
+    + "\"\n          class=\"sw_sc_pg_ctrl\"\n          >\n          "
+    + alias2(alias1((depth0 != null ? depth0.page : depth0), depth0))
+    + "\n        </a>\n      </li>\n\n";
+},"7":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  <li class=\"next\"\n     >\n     <a id=\"sw_sc_next\"\n       data-url=\""
+    + container.escapeExpression(((helper = (helper = helpers.next || (depth0 != null ? depth0.next : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"next","hash":{},"data":data}) : helper)))
+    + "\"\n       class=\"sw_sc_pg_ctrl\">\n    \n   \n";
+},"9":function(container,depth0,helpers,partials,data) {
+    return "    <li class=\"disabled\">\n      <a id=\"sw_sc_next\">\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : {};
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.previous : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + "      <span aria-hidden=\"true\">&laquo;</span></a>\n    </li>\n\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.links : depth0),{"name":"each","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    \n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.next : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
+    + "     \n            <span aria-hidden=\"true\">&raquo;</span></a>\n  </li>\n\n";
+},"useData":true});

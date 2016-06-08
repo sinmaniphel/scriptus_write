@@ -163,7 +163,7 @@ class StoryBoardManager {
 	var scene_item_tmpl = ScriptusTemplates.sw_sc_li;
 	var container = $('#scene_list');
 	var __this = this;
-	var ajax = this.ajax
+	var ajax = this.ajax;
 	
 	$('.sw_scene_item').each(
 	    function() {
@@ -172,6 +172,25 @@ class StoryBoardManager {
 	);
 
 	var first_item = undefined;
+
+	var pager_template = ScriptusTemplates.sw_sc_pg;
+	var pager = $(pager_template(json));
+	var pg_ul = $('#sw_sc_pager');
+	pg_ul.html(pager);
+	var ctrls = pg_ul.find('.sw_sc_pg_ctrl');
+	ctrls.each(
+	    function()
+	    {
+		var url = $(this).data('url');
+		var handler_func = __this.redraw_scene_list.bind(__this);
+		$(this).click(
+		    function() {
+			ajax.ajax_list_scenes(url, handler_func);
+					  
+		    }
+		)
+	    }
+	)
 	
 	for(var scene of json.results)
 	{
@@ -192,7 +211,9 @@ class StoryBoardManager {
 	}
 	this._tl_manager.update_hook = this._tl_update_hook.bind(this);
 	
-	first_item.click();
+	if(first_item!=undefined) {
+	    first_item.click();
+	}
     }
 
    

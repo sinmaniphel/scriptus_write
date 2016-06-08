@@ -44,12 +44,16 @@
 	    <button class="btn pull-right btn-danger ">New</button>
 
 	  </li>
-	  <li class="list-group-item">     
+	  <li class="list-group-item" id="sw_sc_controls">     
 	    <div class="input-group">
 	      <span class="input-group-addon glyphicon glyphicon-search" id="basic-addon1"></span>
 	      <input type="text" class="form-control" placeholder="Scene name..." aria-describedby="basic-addon1" onkeyup="sb_manager.filter_list(this)"></input>
 	    </div>
-	    
+	     
+	  </li>
+	  <li class="list-group-item text-center" id="sw_sc_pagination">
+	     <ul class="pagination" id="sw_sc_pager">
+	     </ul>
 	  </li>
 	  {% for scene in scenes.timed %}
 	  <a class="list-group-item sw_dated_scene_item sw_scene_item"

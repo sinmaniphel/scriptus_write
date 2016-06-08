@@ -7,6 +7,8 @@ from scriptus_write.models import TimeFrame
 from scriptus_write.rest_serializers import SceneSerializer
 from scriptus_write.rest_serializers import TimeFrameSerializer
 
+from scriptus_write.rest_pagers import AllPagesNumbersPagination
+
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
@@ -42,6 +44,7 @@ class SceneViewSet(viewsets.ModelViewSet):
 
     queryset = Scene.objects.all()
     serializer_class = SceneSerializer
+    pagination_class = AllPagesNumbersPagination
 
     @list_route()
     def timed(self, request):
