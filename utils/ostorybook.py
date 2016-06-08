@@ -63,6 +63,10 @@ class OStoryBookLoader:
         self.strands = self.import_strands()
         self.scenes = self.import_scenes()
 
+        self.import_scene_character()
+        self.import_scene_location()
+        self.import_scene_strand()
+
         self.__connection.close()
         return self
 
@@ -73,8 +77,11 @@ class OStoryBookLoader:
                         notes,
                         description):
         f_notes, f_description = call_func(objname)
-        self.__filesystem.save_file(f_notes, notes)
-        self.__filesystem.save_file(f_description, description)
+        self.__filesystem.save_file(f_notes,
+                                    notes.replace('\\n', '')
+                                    )
+        self.__filesystem.save_file(f_description,
+                                    description.replace('\\n', ''))
 
         obj.description = self._new_content(f_description, objname)
         obj.notes = self._new_content(f_notes, objname)
@@ -391,8 +398,8 @@ class OStoryBookLoader:
         for r_rela in r_relas:
             i_scene = r_rela['SCENE_ID']
             i_strand = r_rela['STRAND_ID']
-            o_rel1 = self.scene[i_scene]
-            o_rel2 = self.strand[i_strand]
+            o_rel1 = self.scenes[i_scene]
+            o_rel2 = self.strands[i_strand]
             rela = mods.SceneStrand(scene=o_rel1,
                                     strand=o_rel2)
             l_relas.append(rela)
@@ -410,8 +417,8 @@ class OStoryBookLoader:
         for r_rela in r_relas:
             i_scene = r_rela['SCENE_ID']
             i_loc = r_rela['LOCATION_ID']
-            o_rel1 = self.scene[i_scene]
-            o_rel2 = self.strand[i_loc]
+            o_rel1 = self.scenes[i_scene]
+            o_rel2 = self.locations[i_loc]
             rela = mods.SceneLocation(scene=o_rel1,
                                       location=o_rel2)
             l_relas.append(rela)

@@ -3,9 +3,14 @@
 
 from scriptus_write.models import Scene
 from scriptus_write.models import TimeFrame
+from scriptus_write.models import Character
+from scriptus_write.models import SceneCharacter
+from scriptus_write.models import Gender
 
 from scriptus_write.rest_serializers import SceneSerializer
 from scriptus_write.rest_serializers import TimeFrameSerializer
+from scriptus_write.rest_serializers import CharacterSerializer
+from scriptus_write.rest_serializers import GenderSerializer
 
 from scriptus_write.rest_pagers import AllPagesNumbersPagination
 
@@ -57,3 +62,27 @@ class SceneViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(timed_scenes, many=True)
         return Response(serializer.data)
+
+    @detail_route()
+    def detailed(self, request, pk=None):
+        serializer = self.get_serializer(
+            self.get_object()
+        )
+        charas = SceneCharacter.objects.filter(
+            scene=self.get_object()
+        )
+        ret = serializer.data
+        ret['character_count'] = len(charas)
+        return Response(ret)
+
+
+class CharacterViewSet(viewsets.ModelViewSet):
+
+    queryset = Character.objects.all()
+    serializer_class = CharacterSerializer
+
+
+class GenderViewSet(viewsets.ModelViewSet):
+
+    queryset = Gender.objects.all()
+    serializer_class = GenderSerializer

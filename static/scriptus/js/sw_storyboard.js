@@ -10,7 +10,7 @@ class StoryBoardAJax
 
     ajax_scene_search_from_elem(elem, handler_func)
     {
-	var r_url = elem.data('url');
+	var r_url = elem.data('url')+'detailed/';
 	this.ajax_scene_search( r_url, handler_func);
 		
     }
@@ -22,8 +22,8 @@ class StoryBoardAJax
 	    {
 		url : s_url, // the endpoint,commonly same url
 		type : "GET", // http method
-		data : { csrfmiddlewaretoken : csrftoken, 
-     		       },
+//		data : { csrfmiddlewaretoken : csrftoken, 
+//     		       },
 		success: handler_func,
 		error: this.handle_error
 	    }
@@ -34,13 +34,15 @@ class StoryBoardAJax
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
 	var err_func = this.handle_error;
-	var u_modes = service_url+"?"+$.param(modes);
+	var p_modes = Object.keys(modes) == 0 ? "":$.param(modes)
+	var append_car = service_url.includes('?')?"&":"?";
+	var u_modes = service_url+append_car+p_modes;
 	$.ajax(
 	    {
 		url : u_modes, // the endpoint,commonly same url
 		type : "GET", // http method
-		data : { csrfmiddlewaretoken : csrftoken, 
-     		       },
+//		data : { csrfmiddlewaretoken : csrftoken, 
+  //   		       },
 		success: handler_func,
 		error: err_func
 	    }

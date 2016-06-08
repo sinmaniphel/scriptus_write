@@ -47,13 +47,15 @@ this["ScriptusTemplates"]["sw_sc_main_pannel"] = Handlebars.template({"1":functi
 },"3":function(container,depth0,helpers,partials,data) {
     return "       <div class='input-group date'\n        id='sc_datetimepicker'\n        >\n        <input type='text' class=\"form-control\" />\n        <span class=\"input-group-addon\">\n          <span class=\"glyphicon glyphicon-calendar\"></span>\n        </span>\n      </div>\n   \n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function";
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "  <div class=\"panel-heading\">\n    <h3 class=\"panel-title\" id=\"scene_title\">"
-    + container.escapeExpression(((helper = (helper = helpers.scene_title || (depth0 != null ? depth0.scene_title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"scene_title","hash":{},"data":data}) : helper)))
+    + alias4(((helper = (helper = helpers.scene_title || (depth0 != null ? depth0.scene_title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"scene_title","hash":{},"data":data}) : helper)))
     + "\n    </h3>\n  </div>\n  <div class=\"panel-body\" id=\"sc_date_content\" >\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
-    + "  </div>\n  <ul class=\"list-group\">\n    <li class=\"list-group-item\" id=\"scene_content\">\n      "
+    + "  </div>\n  <ul class=\"list-group\">\n    <li class=\"list-group-item\" >\n      <span class=\"badge\">"
+    + alias4(((helper = (helper = helpers.character_count || (depth0 != null ? depth0.character_count : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"character_count","hash":{},"data":data}) : helper)))
+    + "</span>\n    Characters \n  </ul>    \n  <ul class=\"list-group\">\n    <li class=\"list-group-item\" id=\"scene_content\">\n      "
     + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n  </ul>    ";
 },"useData":true});

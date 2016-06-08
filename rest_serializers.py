@@ -6,6 +6,9 @@ from scriptus_write.utils import fsmanager
 from scriptus_write.models import Scene
 from scriptus_write.models import Content
 from scriptus_write.models import TimeFrame
+from scriptus_write.models import Character
+from scriptus_write.models import SceneCharacter
+from scriptus_write.models import Gender
 
 import datetime as dt
 
@@ -36,6 +39,29 @@ class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = TimeFrame
+
+
+class GenderSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Gender
+        exclude = ('story',)
+
+
+class CharacterSerializer(serializers.HyperlinkedModelSerializer):
+
+    description = serializers.SerializerMethodField()
+    chara_gender = GenderSerializer()
+
+    class Meta:
+        model = Character
+        fields = ('description', 'chara_whole_name',
+                  'chara_nickname', 'chara_gender')
+
+    def get_description(self, obj):
+        #story = obj.story
+        # fs = fsmanager.ScriptusFsProject(story.base_uri)
+        return fsmanager.get_string_content(obj.description)
 
 
 class SceneSerializer(serializers.HyperlinkedModelSerializer):
