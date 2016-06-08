@@ -86,6 +86,7 @@ class StoryBoardManager {
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
 	this.url = service_url;
+	this._sweet_mgr = new SweetAlertManager();
 	HandlebarsIntl.registerWith(Handlebars);
 
     }
@@ -142,12 +143,32 @@ class StoryBoardManager {
 	});
 	picker.on('dp.change', function(e) {
 	    // e.date is a moment object
-	    json.timeframe.tf_start = e.date.toJSON();
-	    __this.ajax.ajax_update_scene(json,
-					  __this.init.bind(__this))
+
+	    __this.__scene_update_alert(e, json)
 	}
 		 )
 
+    }
+
+    __scene_update_alert(event, json) {
+	var title = "Update scene "+json.scene_title+" ?";
+	var text = "Do you really want to update scene ?";
+	json.timeframe.tf_start = event.date.toJSON();
+	this._sweet_mgr.prettyConfirm(
+	    title,
+	    text,
+	    'update',
+	    json,
+	    this._sc_update_hook.bind(this)
+	)
+	;
+	    
+	
+    }
+
+    _sc_update_hook(event, properties) {
+	var dt = properties;
+	this.ajax.ajax_update_scene(dt, this.init.bind(this))
     }
 
     _tl_update_hook(event, properties) {
@@ -228,6 +249,8 @@ class StoryBoardManager {
 	
     }
 
+    
+
 
 }
 
@@ -241,7 +264,17 @@ class TimeLineManager {
 	this.delete_hook = null;
 	this.select_hook = null;
 	this.service_url = service_url;
+	this.sweet_mgr = new SweetAlertManager();
 	this.utils = new SWDjangoUtils();
+    }
+
+    update_alert(event, properties) {
+	var dt = properties.data[0];
+	var title = "Update scene "+dt.scene_title+" ?";
+	var text = "Do you really want to update scene ?";
+	this.sweet_mgr.prettyConfirm(
+	    title, text, event, properties, this.update_hook
+	);
     }
 
     redraw(
@@ -249,7 +282,7 @@ class TimeLineManager {
     {
 	var items = new vis.DataSet(data);
 	var _this = this;
-	items.on('update', this.update_hook);
+	items.on('update', this.update_alert.bind(this));
 
 	var options = {
 	    height: '300px',
@@ -289,6 +322,7 @@ class TimeLineManager {
 
     }
 
+    
    
     
 }
@@ -371,6 +405,49 @@ class SWDjangoUtils {
 }
 
 
+class SweetAlertManager {
+
+    prettyPrompt(title,
+		 text,
+		 inputValue,
+		 event_type,
+		 data,
+		 callback) {
+	swal(
+	    {
+		title: title,
+		text: text,
+		type: 'input',
+		showCancelButton: true,
+		inputValue: inputValue
+	    },
+	    
+	    function(isConfirm) {
+		if(isConfirm) {
+		    callback(event_type, data);
+		}
+	    }
+	)
+    }
+
+    prettyConfirm(title, text, event_type, data, callback) {
+	swal(
+	    {
+		title: title,
+		text: text,
+		type: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: "#DD6B55"
+	    },
+	    function(isConfirm) {
+		if(isConfirm) {
+		    callback(event_type, data);
+		}
+	    });
+    }
+
+
+}
 
 
 
