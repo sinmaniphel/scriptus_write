@@ -137,7 +137,8 @@ class StoryBoardManager {
 	var __this = this;
 	var picker = $('#sc_datetimepicker').datetimepicker({
 	    sideBySide: true,
-	    defaultDate: d_time
+	    defaultDate: d_time,
+	    locale: navigator.language
 	});
 	picker.on('dp.change', function(e) {
 	    // e.date is a moment object
