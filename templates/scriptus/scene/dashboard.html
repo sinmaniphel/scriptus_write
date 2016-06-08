@@ -25,25 +25,9 @@
     <div class="scene-list">
       <div class="panel panel-default">
 	<div class="list-group" id="scene_list">
-	  <li class="list-group-item">
-	    <div class="btn-group" role="group">
-	      <button type="button"
-		    class="btn btn-default dropdown-toggle"
-		    data-toggle="dropdown"
-		    aria-haspopup="true"
-		    aria-expanded="false">
-		Show...
-		<span class="caret"></span>
-	      </button>
-	      <ul class="dropdown-menu">
-		<li><a href="#">All scences</a></li>
-		<li><a href="#">Dated only</a></li>
-		<li><a href="#">Without date</a></li>
-	      </ul>
-	    </div>
-	    <button class="btn pull-right btn-danger ">New</button>
-
+	  <li class="list-group-item" id="sw_sc_buttons">
 	  </li>
+	  
 	  <li class="list-group-item" id="sw_sc_controls">     
 	    <div class="input-group">
 	      <span class="input-group-addon glyphicon glyphicon-search" id="basic-addon1"></span>
@@ -127,8 +111,7 @@
   {% autoescape off %}
   {% endautoescape %}
   var list_url ='{% url 'scene-list' %}';
-  var s_timeline_url = '{% url 'scene-timed' %}'
-  sb_manager = new StoryBoardManager(list_url, s_timeline_url);
+  sb_manager = new StoryBoardManager(list_url);
   sb_manager.init();
 
 </script>

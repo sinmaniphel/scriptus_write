@@ -30,13 +30,14 @@ class StoryBoardAJax
 	);
     }
 
-    ajax_list_scenes(service_url, handler_func)
+    ajax_list_scenes(service_url, handler_func, modes)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
 	var err_func = this.handle_error;
+	var u_modes = service_url+"?"+$.param(modes);
 	$.ajax(
 	    {
-		url : service_url, // the endpoint,commonly same url
+		url : u_modes, // the endpoint,commonly same url
 		type : "GET", // http method
 		data : { csrfmiddlewaretoken : csrftoken, 
      		       },
@@ -78,21 +79,32 @@ class StoryBoardAJax
 class StoryBoardManager {
 
 
-    constructor(service_url, s_time_url){
+    constructor(service_url){
 	// PUBLIC
 	this.ajax = new StoryBoardAJax();
 	// private
-	this._tl_manager = new TimeLineManager(s_time_url);
+	this._tl_manager = new TimeLineManager(service_url+"all/?timed=timed");
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
 	this.url = service_url;
 	this._sweet_mgr = new SweetAlertManager();
 	HandlebarsIntl.registerWith(Handlebars);
+	this.filter_mode = {};
 
     }
     
     
-    
+    __get_label(time_filter) {
+	switch(time_filter) {
+	case "timed":
+	    return "Timed scenes";
+	case "untimed":
+	    return "Timeless scenes";
+	default:
+	    return "All scenes";
+	}
+	
+    }
     
 
     filter_list( element )
@@ -195,6 +207,42 @@ class StoryBoardManager {
 
 	var first_item = undefined;
 
+	var buttons_template = ScriptusTemplates.sw_sc_timed_dropdown
+	var buttons_context = {'current_action': this.__get_label
+			       (
+				   this.filter_mode['timed']
+			       )
+			      };
+	var buttons = $(buttons_template(buttons_context));
+	var bt_li = $('#sw_sc_buttons');
+	bt_li.html(buttons);
+	var f_mode = this.filter_mode;
+
+	var bt_filters = bt_li.find('.sc-filter-mode');
+	bt_filters.each(
+	    function() {
+		var handler_func = __this.redraw_scene_list.bind(__this);
+		$(this).click(
+		    
+		    function() {
+			var mode = $(this).data('mode');
+		
+			if(mode) {
+			    f_mode['timed']=mode;
+			}
+			else {
+			    delete f_mode['timed'];
+			}
+		
+			ajax.ajax_list_scenes(__this.url, handler_func, f_mode);
+					  
+		    }
+		)
+	    }
+	);
+	
+		
+			       
 	var pager_template = ScriptusTemplates.sw_sc_pg;
 	var pager = $(pager_template(json));
 	var pg_ul = $('#sw_sc_pager');
@@ -207,7 +255,7 @@ class StoryBoardManager {
 		var handler_func = __this.redraw_scene_list.bind(__this);
 		$(this).click(
 		    function() {
-			ajax.ajax_list_scenes(url, handler_func);
+			ajax.ajax_list_scenes(url, handler_func, f_mode);
 					  
 		    }
 		)
@@ -244,7 +292,8 @@ class StoryBoardManager {
     {
 	this._tl_manager.refresh_from_server();
 	this.ajax.ajax_list_scenes(this.url,
-				   this.redraw_scene_list.bind(this)
+				   this.redraw_scene_list.bind(this),
+				   this.filter_mode
 				  )
 	
     }

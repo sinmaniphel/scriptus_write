@@ -92,3 +92,11 @@ this["ScriptusTemplates"]["sw_sc_pg"] = Handlebars.template({"1":function(contai
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.next : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
     + "     \n            <span aria-hidden=\"true\">&raquo;</span></a>\n  </li>\n\n";
 },"useData":true});
+
+this["ScriptusTemplates"]["sw_sc_timed_dropdown"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  <div class=\"btn-group\" role=\"group\">\n    <button type=\"button\"\n      class=\"btn btn-default dropdown-toggle\"\n      data-toggle=\"dropdown\"\n      aria-haspopup=\"true\"\n      aria-expanded=\"false\">\n      "
+    + container.escapeExpression(((helper = (helper = helpers.current_action || (depth0 != null ? depth0.current_action : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"current_action","hash":{},"data":data}) : helper)))
+    + "\n      <span class=\"caret\"></span>\n    </button>\n    <ul class=\"dropdown-menu\">\n      <li>\n        <a class=\"sc-filter-mode\"\n          >All scenes</a>\n      </li>\n      <li><a\n        class=\"sc-filter-mode\"\n        data-mode=\"timed\"\n          >Dated only</a></li>\n          <li><a class=\"sc-filter-mode\"\n            data-mode=\"untimed\"\n            >Without date</a></li>\n    </ul>\n  </div>\n  <button class=\"btn pull-right btn-danger \">New</button>";
+},"useData":true});
