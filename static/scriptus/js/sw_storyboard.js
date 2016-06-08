@@ -4,7 +4,8 @@ class StoryBoardAJax
     
     constructor()
     {
-	this._sw_utils = new SWDjangoUtils();	
+	this._sw_utils = new SWDjangoUtils();
+	
     }
 
     ajax_scene_search_from_elem(elem, handler_func)
@@ -29,13 +30,14 @@ class StoryBoardAJax
 	);
     }
 
-    ajax_list_scenes(service_url, handler_func)
+    ajax_list_scenes(service_url, handler_func, modes)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
 	var err_func = this.handle_error;
+	var u_modes = service_url+"?"+$.param(modes);
 	$.ajax(
 	    {
-		url : service_url, // the endpoint,commonly same url
+		url : u_modes, // the endpoint,commonly same url
 		type : "GET", // http method
 		data : { csrfmiddlewaretoken : csrftoken, 
      		       },
@@ -46,6 +48,7 @@ class StoryBoardAJax
 
     }
 
+  
     ajax_update_scene(scene, handler_func)
     {
 	var csrftoken = this._sw_utils.getCsrfToken();
@@ -80,30 +83,48 @@ class StoryBoardManager {
 	// PUBLIC
 	this.ajax = new StoryBoardAJax();
 	// private
-	this._tl_manager = new TimeLineManager();
+	this._tl_manager = new TimeLineManager(service_url+"all/?timed=timed");
 	this.filter_field = null;
 	this._sw_utils = new SWDjangoUtils();
 	this.url = service_url;
+	this._sweet_mgr = new SweetAlertManager();
+	HandlebarsIntl.registerWith(Handlebars);
+	this.filter_mode = {};
 
     }
     
     
-    
+    __get_label(time_filter) {
+	switch(time_filter) {
+	case "timed":
+	    return "Timed scenes";
+	case "untimed":
+	    return "Timeless scenes";
+	default:
+	    return "All scenes";
+	}
+	
+    }
     
 
     filter_list( element )
     {
 	this.filter_field = element;
 	var value = $(element).val().toLowerCase();
+	var threshold = 4;
+	if(value.length < threshold)
+	{
+	    delete this.filter_mode['scene_title']
+	    return;
+	}
 
-	$(".sw_scene_item").each(function() {
-            if ($(this).find('h4').text().toLowerCase().search(value) > -1) {
-            $(this).show();
-        }
-        else {
-            $(this).hide();
-        }
-	});
+	this.filter_mode['scene_title'] = value;
+	this.ajax.ajax_list_scenes(
+	    this.url,
+	    this.redraw_scene_list.bind(this),
+	    this.filter_mode);
+	
+	
     }
 
     
@@ -134,16 +155,37 @@ class StoryBoardManager {
 	var __this = this;
 	var picker = $('#sc_datetimepicker').datetimepicker({
 	    sideBySide: true,
-	    defaultDate: d_time
+	    defaultDate: d_time,
+	    locale: navigator.language
 	});
 	picker.on('dp.change', function(e) {
 	    // e.date is a moment object
-	    json.timeframe.tf_start = e.date.toJSON();
-	    __this.ajax.ajax_update_scene(json,
-					  __this.init.bind(__this))
+
+	    __this.__scene_update_alert(e, json)
 	}
 		 )
 
+    }
+
+    __scene_update_alert(event, json) {
+	var title = "Update scene "+json.scene_title+" ?";
+	var text = "Do you really want to update scene ?";
+	json.timeframe.tf_start = event.date.toJSON();
+	this._sweet_mgr.prettyConfirm(
+	    title,
+	    text,
+	    'update',
+	    json,
+	    this._sc_update_hook.bind(this)
+	)
+	;
+	    
+	
+    }
+
+    _sc_update_hook(event, properties) {
+	var dt = properties;
+	this.ajax.ajax_update_scene(dt, this.init.bind(this))
     }
 
     _tl_update_hook(event, properties) {
@@ -160,7 +202,7 @@ class StoryBoardManager {
 	var scene_item_tmpl = ScriptusTemplates.sw_sc_li;
 	var container = $('#scene_list');
 	var __this = this;
-	var ajax = this.ajax
+	var ajax = this.ajax;
 	
 	$('.sw_scene_item').each(
 	    function() {
@@ -169,6 +211,61 @@ class StoryBoardManager {
 	);
 
 	var first_item = undefined;
+
+	var buttons_template = ScriptusTemplates.sw_sc_timed_dropdown
+	var buttons_context = {'current_action': this.__get_label
+			       (
+				   this.filter_mode['timed']
+			       )
+			      };
+	var buttons = $(buttons_template(buttons_context));
+	var bt_li = $('#sw_sc_buttons');
+	bt_li.html(buttons);
+	var f_mode = this.filter_mode;
+
+	var bt_filters = bt_li.find('.sc-filter-mode');
+	bt_filters.each(
+	    function() {
+		var handler_func = __this.redraw_scene_list.bind(__this);
+		$(this).click(
+		    
+		    function() {
+			var mode = $(this).data('mode');
+		
+			if(mode) {
+			    f_mode['timed']=mode;
+			}
+			else {
+			    delete f_mode['timed'];
+			}
+		
+			ajax.ajax_list_scenes(__this.url, handler_func, f_mode);
+					  
+		    }
+		)
+	    }
+	);
+	
+		
+			       
+	var pager_template = ScriptusTemplates.sw_sc_pg;
+	var pager = $(pager_template(json));
+	var pg_ul = $('#sw_sc_pager');
+	pg_ul.html(pager);
+	var ctrls = pg_ul.find('.sw_sc_pg_ctrl');
+	ctrls.each(
+	    function()
+	    {
+		var url = $(this).data('url');
+		var handler_func = __this.redraw_scene_list.bind(__this);
+		$(this).click(
+		    function() {
+			ajax.ajax_list_scenes(url, handler_func, f_mode);
+					  
+		    }
+		)
+	    }
+	)
 	
 	for(var scene of json.results)
 	{
@@ -189,44 +286,57 @@ class StoryBoardManager {
 	}
 	this._tl_manager.update_hook = this._tl_update_hook.bind(this);
 	
-	this._tl_manager.init_timeline(json.results.filter(
-	    function(el){
-		return el.start != undefined;
-	    }
-	));
-	first_item.click();
+	if(first_item!=undefined) {
+	    first_item.click();
+	}
     }
 
    
     
     init()
     {
+	this._tl_manager.refresh_from_server();
 	this.ajax.ajax_list_scenes(this.url,
-				   this.redraw_scene_list.bind(this)
+				   this.redraw_scene_list.bind(this),
+				   this.filter_mode
 				  )
-	    
+	
     }
+
+    
 
 
 }
 
 class TimeLineManager {
 
-    constructor() {
+    constructor(service_url) {
 	this.timeline = null;
 	this._timeline_cont = $('#sw_timeline')[0];
-
+	this.service_url = service_url;
 	this.update_hook = null;
 	this.delete_hook = null;
 	this.select_hook = null;
+	this.service_url = service_url;
+	this.sweet_mgr = new SweetAlertManager();
+	this.utils = new SWDjangoUtils();
     }
 
-    init_timeline(
+    update_alert(event, properties) {
+	var dt = properties.data[0];
+	var title = "Update scene "+dt.scene_title+" ?";
+	var text = "Do you really want to update scene ?";
+	this.sweet_mgr.prettyConfirm(
+	    title, text, event, properties, this.update_hook
+	);
+    }
+
+    redraw(
 	data    )
     {
 	var items = new vis.DataSet(data);
 	var _this = this;
-	items.on('update', this.update_hook);
+	items.on('update', this.update_alert.bind(this));
 
 	var options = {
 	    height: '300px',
@@ -248,6 +358,25 @@ class TimeLineManager {
 	return this.timeline;
     }
 
+    refresh_from_server() {
+	var csrftoken = this.utils.getCsrfToken();
+	var err_func = this._handle_error;
+	var handler_func = this.redraw.bind(this);
+	$.ajax(
+	    {
+		url : this.service_url, // the endpoint,commonly same url
+		type : "GET", // http method
+		data : { csrfmiddlewaretoken : csrftoken, 
+     		       },
+		success: handler_func,
+		error: err_func
+	    }
+	);
+
+
+    }
+
+    
    
     
 }
@@ -330,6 +459,49 @@ class SWDjangoUtils {
 }
 
 
+class SweetAlertManager {
+
+    prettyPrompt(title,
+		 text,
+		 inputValue,
+		 event_type,
+		 data,
+		 callback) {
+	swal(
+	    {
+		title: title,
+		text: text,
+		type: 'input',
+		showCancelButton: true,
+		inputValue: inputValue
+	    },
+	    
+	    function(isConfirm) {
+		if(isConfirm) {
+		    callback(event_type, data);
+		}
+	    }
+	)
+    }
+
+    prettyConfirm(title, text, event_type, data, callback) {
+	swal(
+	    {
+		title: title,
+		text: text,
+		type: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: "#DD6B55"
+	    },
+	    function(isConfirm) {
+		if(isConfirm) {
+		    callback(event_type, data);
+		}
+	    });
+    }
+
+
+}
 
 
 

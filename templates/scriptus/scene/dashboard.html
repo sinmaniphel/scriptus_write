@@ -12,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'scriptus/css/sw_storyboard.css' %}" />
  <link rel="stylesheet" href="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" />
 <!-- link rel="stylesheet" type="text/css" href="{% static 'vendor/bootcards/dist/css/bootcards-android.min.css' %}" /-->
-
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/sweetalert/dist/sweetalert.css' %}">
 {% endblock %}
 
 {% block sw_content %}
@@ -25,31 +25,19 @@
     <div class="scene-list">
       <div class="panel panel-default">
 	<div class="list-group" id="scene_list">
-	  <li class="list-group-item">
-	    <div class="btn-group" role="group">
-	      <button type="button"
-		    class="btn btn-default dropdown-toggle"
-		    data-toggle="dropdown"
-		    aria-haspopup="true"
-		    aria-expanded="false">
-		Show...
-		<span class="caret"></span>
-	      </button>
-	      <ul class="dropdown-menu">
-		<li><a href="#">All scences</a></li>
-		<li><a href="#">Dated only</a></li>
-		<li><a href="#">Without date</a></li>
-	      </ul>
-	    </div>
-	    <button class="btn pull-right btn-danger ">New</button>
-
+	  <li class="list-group-item" id="sw_sc_buttons">
 	  </li>
-	  <li class="list-group-item">     
+	  
+	  <li class="list-group-item" id="sw_sc_controls">     
 	    <div class="input-group">
 	      <span class="input-group-addon glyphicon glyphicon-search" id="basic-addon1"></span>
 	      <input type="text" class="form-control" placeholder="Scene name..." aria-describedby="basic-addon1" onkeyup="sb_manager.filter_list(this)"></input>
 	    </div>
-	    
+	     
+	  </li>
+	  <li class="list-group-item text-center" id="sw_sc_pagination">
+	     <ul class="pagination" id="sw_sc_pager">
+	     </ul>
 	  </li>
 	  {% for scene in scenes.timed %}
 	  <a class="list-group-item sw_dated_scene_item sw_scene_item"
@@ -104,13 +92,15 @@
 <script type="text/javascript" src="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script >
 
 <!-- handlebars --> 
+
 <script src="{% static 'vendor/handlebars/handlebars.runtime.js' %}" ></script>
+<script src="{% static 'vendor/handlebars-helper-intl/dist/handlebars-intl-with-locales.min.js' %}" ></script>
+
+
 <script src="{% static 'scriptus/sw_handlebars.js' %}" ></script>
 
-
-
-<!-- handlebar templates -->
-
+<!-- sweet alert -->
+<script src="{% static 'vendor/sweetalert/dist/sweetalert.min.js' %}" ></script>
 
 
 

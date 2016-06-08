@@ -9,13 +9,13 @@ this["ScriptusTemplates"]["sw_sc_li"] = Handlebars.template({"1":function(contai
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1), depth0))
     + "\"\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "      Start : "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1), depth0))
-    + " - End : "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1), depth0))
-    + "\n";
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"long","day":"numeric"},"data":data}))
+    + "\n      <br/>\n      End : "
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"long","day":"numeric"},"data":data}))
+    + "\n      \n";
 },"5":function(container,depth0,helpers,partials,data) {
     return "      Not dated yet\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -37,12 +37,12 @@ this["ScriptusTemplates"]["sw_sc_li"] = Handlebars.template({"1":function(contai
 },"useData":true});
 
 this["ScriptusTemplates"]["sw_sc_main_pannel"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "       \n      <span class=\"label label-success\" id=\"sc_dt_start\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1), depth0))
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_start : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"short","day":"numeric"},"data":data}))
     + "\n      </span>\n      <span class=\"label label-danger\" id=\"sc_dt_end\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1), depth0))
+    + alias3((helpers.formatDate || (depth0 && depth0.formatDate) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.timeframe : depth0)) != null ? stack1.tf_end : stack1),{"name":"formatDate","hash":{"minute":"numeric","hour":"numeric","year":"numeric","month":"short","day":"numeric"},"data":data}))
     + "\n      </span>\n\n";
 },"3":function(container,depth0,helpers,partials,data) {
     return "       <div class='input-group date'\n        id='sc_datetimepicker'\n        >\n        <input type='text' class=\"form-control\" />\n        <span class=\"input-group-addon\">\n          <span class=\"glyphicon glyphicon-calendar\"></span>\n        </span>\n      </div>\n   \n";
@@ -56,4 +56,47 @@ this["ScriptusTemplates"]["sw_sc_main_pannel"] = Handlebars.template({"1":functi
     + "  </div>\n  <ul class=\"list-group\">\n    <li class=\"list-group-item\" id=\"scene_content\">\n      "
     + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n  </ul>    ";
+},"useData":true});
+
+this["ScriptusTemplates"]["sw_sc_pg"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  <li class=\"previous\" \">\n    <a id=\"sw_sc_prev\"\n      class=\"sw_sc_pg_ctrl\"\n      data-url=\""
+    + container.escapeExpression(((helper = (helper = helpers.previous || (depth0 != null ? depth0.previous : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"previous","hash":{},"data":data}) : helper)))
+    + "\"\n      >\n    \n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return "    <li class=\"disabled\">\n      <a >\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "      \n      <li>\n        <a data-url=\""
+    + alias2(alias1((depth0 != null ? depth0.url : depth0), depth0))
+    + "\"\n          class=\"sw_sc_pg_ctrl\"\n          >\n          "
+    + alias2(alias1((depth0 != null ? depth0.page : depth0), depth0))
+    + "\n        </a>\n      </li>\n\n";
+},"7":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  <li class=\"next\"\n     >\n     <a id=\"sw_sc_next\"\n       data-url=\""
+    + container.escapeExpression(((helper = (helper = helpers.next || (depth0 != null ? depth0.next : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"next","hash":{},"data":data}) : helper)))
+    + "\"\n       class=\"sw_sc_pg_ctrl\">\n    \n   \n";
+},"9":function(container,depth0,helpers,partials,data) {
+    return "    <li class=\"disabled\">\n      <a id=\"sw_sc_next\">\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : {};
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.previous : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + "      <span aria-hidden=\"true\">&laquo;</span></a>\n    </li>\n\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.links : depth0),{"name":"each","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    \n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.next : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
+    + "     \n            <span aria-hidden=\"true\">&raquo;</span></a>\n  </li>\n\n";
+},"useData":true});
+
+this["ScriptusTemplates"]["sw_sc_timed_dropdown"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  <div class=\"btn-group\" role=\"group\">\n    <button type=\"button\"\n      class=\"btn btn-default dropdown-toggle\"\n      data-toggle=\"dropdown\"\n      aria-haspopup=\"true\"\n      aria-expanded=\"false\">\n      "
+    + container.escapeExpression(((helper = (helper = helpers.current_action || (depth0 != null ? depth0.current_action : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"current_action","hash":{},"data":data}) : helper)))
+    + "\n      <span class=\"caret\"></span>\n    </button>\n    <ul class=\"dropdown-menu\">\n      <li>\n        <a class=\"sc-filter-mode\"\n          >All scenes</a>\n      </li>\n      <li><a\n        class=\"sc-filter-mode\"\n        data-mode=\"timed\"\n          >Dated only</a></li>\n          <li><a class=\"sc-filter-mode\"\n            data-mode=\"untimed\"\n            >Without date</a></li>\n    </ul>\n  </div>\n  <button class=\"btn pull-right btn-danger \">New</button>";
 },"useData":true});

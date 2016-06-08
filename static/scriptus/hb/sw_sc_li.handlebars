@@ -10,8 +10,11 @@
       
   <h4 class="list-group-item-heading">{{ scene_title}}</h4>
   <p class="list-group-item-text">
-      {{#if timeframe.tf_start }}
-      Start : {{ timeframe.tf_start }} - End : {{ timeframe.tf_end }}
+    {{#if timeframe.tf_start }}
+      Start : {{formatDate timeframe.tf_start day="numeric" month="long" year="numeric" hour="numeric" minute="numeric"}}
+      <br/>
+      End : {{formatDate timeframe.tf_end day="numeric" month="long" year="numeric" hour="numeric" minute="numeric"}}
+      
       {{else}}
       Not dated yet
       {{/if}}
