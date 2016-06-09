@@ -15,12 +15,14 @@ from scriptus_write.rest_serializers import GenderSerializer
 from scriptus_write.rest_pagers import AllPagesNumbersPagination
 
 from scriptus_write.filters import SceneFilter
+from scriptus_write.filters import CharacterFilter
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework import filters
+from rest_framework.reverse import reverse
 
 
 from scriptus_write.rest_serializers import UserSerializer, GroupSerializer
@@ -65,14 +67,24 @@ class SceneViewSet(viewsets.ModelViewSet):
 
     @detail_route()
     def detailed(self, request, pk=None):
+        scene = self.get_object()
         serializer = self.get_serializer(
-            self.get_object()
+            scene
         )
         charas = SceneCharacter.objects.filter(
-            scene=self.get_object()
+            scene=scene
         )
         ret = serializer.data
-        ret['character_count'] = len(charas)
+        r_url = reverse('character-list',
+                        request=request)
+
+        url = "{}?scene={}".format(r_url,
+                                   scene.id)
+
+        characters = {'count': len(charas),
+                      'url': url
+                      }
+        ret['characters'] = characters
         return Response(ret)
 
 
@@ -80,6 +92,8 @@ class CharacterViewSet(viewsets.ModelViewSet):
 
     queryset = Character.objects.all()
     serializer_class = CharacterSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = CharacterFilter
 
 
 class GenderViewSet(viewsets.ModelViewSet):

@@ -108,12 +108,12 @@
 <script src="{% static 'scriptus/js/sw_storyboard.js' %}" ></script>
 
 <script type="text/javascript">
-  {% autoescape off %}
-  {% endautoescape %}
-  var list_url ='{% url 'scene-list' %}';
-  sb_manager = new StoryBoardManager(list_url);
-  sb_manager.init();
-
+ {% autoescape off %}
+ {% endautoescape %}
+ var list_url ='{% url 'scene-list' %}';
+ sb_manager = new StoryBoardManager(list_url);
+ sb_manager.init();
+ 
 </script>
 
 {% endblock %}

@@ -5,7 +5,6 @@ class StoryBoardAJax
     constructor()
     {
 	this._sw_utils = new SWDjangoUtils();
-	
     }
 
     ajax_scene_search_from_elem(elem, handler_func)
@@ -78,6 +77,10 @@ class StoryBoardAJax
 }
 
 
+class InfoPanelManager {
+    
+}
+
 class StoryBoardManager {
 
 
@@ -133,11 +136,27 @@ class StoryBoardManager {
     
     redraw_scene(json)
     {
+
+	// load the panel handlebar template
 	var temp_sc_panel = ScriptusTemplates.sw_sc_main_pannel
 	var html = temp_sc_panel(json);
 	var timeline = this.timeline
+
+	// set pannel content with generated template
 	$('#sc_main_panel').html(html);
 
+	// When clicked the character count
+	// should invoke the character detail panel
+	
+	var li_btn = $('#sc_pl_ch_cnt');
+	var s_url = li_btn.data('url');
+	li_btn.click( function() {
+	    ajax.chars_for_scene(
+	}
+		    )
+
+	// zoom on scene in timeline
+	// TODO Maybe an event hook ?
 	if(json['start']) {
 	    this._tl_manager.timeline.fit(json['id']);
 	    this._tl_manager.timeline.setSelection(json['id']);
@@ -201,11 +220,19 @@ class StoryBoardManager {
 
     redraw_scene_list(json)
     {
+
 	var scene_item_tmpl = ScriptusTemplates.sw_sc_li;
+
+	// fetching the container for the list
 	var container = $('#scene_list');
+
+	// will be used in nested functions
 	var __this = this;
+
+	// shortcut and reference
 	var ajax = this.ajax;
-	
+
+	// clear previous list
 	$('.sw_scene_item').each(
 	    function() {
 		$(this).remove();
@@ -214,6 +241,13 @@ class StoryBoardManager {
 
 	var first_item = undefined;
 
+	/*
+	  Init buttons
+	  What we want to do here is :
+	  * Load the compiled handlebars template
+	  * Get the current mode
+	  * Add events to the buttons
+	 */
 	var buttons_template = ScriptusTemplates.sw_sc_timed_dropdown
 	var buttons_context = {'current_action': this.__get_label
 			       (
@@ -224,23 +258,29 @@ class StoryBoardManager {
 	var bt_li = $('#sw_sc_buttons');
 	bt_li.html(buttons);
 	var f_mode = this.filter_mode;
-
+	
+	// adding behaviour
 	var bt_filters = bt_li.find('.sc-filter-mode');
 	bt_filters.each(
 	    function() {
+		// ask to redraw list on filter
+		// binding to this guarantees that the context
+		// will be the story board manager
 		var handler_func = __this.redraw_scene_list.bind(__this);
 		$(this).click(
 		    
 		    function() {
+			// each button contains a data-mode attribute
 			var mode = $(this).data('mode');
 		
 			if(mode) {
 			    f_mode['timed']=mode;
 			}
 			else {
+			    // except for one, which is default status
 			    delete f_mode['timed'];
 			}
-		
+			// actual call to the ajax service
 			ajax.ajax_list_scenes(__this.url, handler_func, f_mode);
 					  
 		    }
@@ -249,15 +289,26 @@ class StoryBoardManager {
 	);
 	
 		
-			       
+	/*
+	  Initiating pager
+	  Our scene requests are paged, pages should
+	  be profided for comfort purpose
+	  * load handlebar template
+	  * apply json context
+	  * add behaviour to pager links
+	 */		       
 	var pager_template = ScriptusTemplates.sw_sc_pg;
 	var pager = $(pager_template(json));
 	var pg_ul = $('#sw_sc_pager');
 	pg_ul.html(pager);
 	var ctrls = pg_ul.find('.sw_sc_pg_ctrl');
+	// adding behaviour on click
 	ctrls.each(
 	    function()
 	    {
+		// links are generated with a data-url attribute
+		// this attribute is provided by the rest service
+		// as scene.url
 		var url = $(this).data('url');
 		var handler_func = __this.redraw_scene_list.bind(__this);
 		$(this).click(
@@ -268,7 +319,11 @@ class StoryBoardManager {
 		)
 	    }
 	)
-	
+
+	/* 
+	   Initiating scenes
+	   For each scene we will apply its json content to a handlebars template
+	*/
 	for(var scene of json.results)
 	{
 	    var item = $(scene_item_tmpl(scene));
@@ -277,6 +332,9 @@ class StoryBoardManager {
 	    if(first_item == undefined && scene.start != undefined) {
 		first_item = item;
 	    }
+	    // on click on an item in the list
+	    // we want to look for this specific scene
+	    // and display it in the right pannel
 	    item.click(
 		function()
 		{
@@ -286,8 +344,11 @@ class StoryBoardManager {
 		}
 	    )
 	}
+
+	// provides a callback for the manager in case of update
 	this._tl_manager.update_hook = this._tl_update_hook.bind(this);
-	
+
+	// try to display the first item anyway
 	if(first_item!=undefined) {
 	    first_item.click();
 	}

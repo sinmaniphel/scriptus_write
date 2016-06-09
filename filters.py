@@ -2,6 +2,8 @@ import django_filters as d_filters
 from rest_framework import filters as r_filters
 
 from scriptus_write.models import Scene
+from scriptus_write.models import Character
+from scriptus_write.models import SceneCharacter
 
 
 class SceneFilter(r_filters.FilterSet):
@@ -24,3 +26,17 @@ class SceneFilter(r_filters.FilterSet):
         if f_value == 'untimed':
             return q_set.filter(timeframe__tf_start__isnull=True)
         return q_set
+
+
+class CharacterFilter(r_filters.FilterSet):
+
+    scene = d_filters.MethodFilter()
+
+    class Meta:
+        model = Character
+        fields = ['scene']
+
+    def filter_scene(self, q_set, f_value):
+        qs_inc = SceneCharacter.objects.filter(scene__id=f_value)
+        inc = qs_inc.values_list('character', flat=True)
+        return q_set.filter(id__in=inc)

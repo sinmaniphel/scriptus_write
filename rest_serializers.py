@@ -80,7 +80,8 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Scene
         fields = ('url', 'id', 'scene_title', 'description', 'start',
-                  'end', 'dt_start', 'dt_end', 'content', 'status', 'timeframe')
+                  'end', 'dt_start', 'dt_end', 'content', 'status',
+                  'timeframe')
 
     def update(self, scene, validated_data):
         print(validated_data)
@@ -102,8 +103,6 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
         timeframe.save()
 
     def get_description(self, obj):
-        #story = obj.story
-        # fs = fsmanager.ScriptusFsProject(story.base_uri)
         return fsmanager.get_string_content(obj.description)
 
     def get_start(self, obj):
