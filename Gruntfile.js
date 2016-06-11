@@ -1,8 +1,5 @@
 'use strict';
 
-var Handlebars     = require('handlebars');
-var HandlebarsIntl = require('handlebars-intl');
-HandlebarsIntl.registerWith(Handlebars);
 
 module.exports = function(grunt) {
 
@@ -20,7 +17,7 @@ module.exports = function(grunt) {
 	  all: {
 	      
 	      options: {
-		  namespace: function(filename){
+		  namespace: function(filename) {
 		      var root = filename.replace("static/scriptus/hb","");
 		      var fname = root.replace(/(.*)\.handlebars/, '$1');		   var l_ns = fname.split('/');
 		      l_ns.pop();
@@ -32,13 +29,77 @@ module.exports = function(grunt) {
 		      var t_name = last_part.split('.')[0]
 		      return t_name;
 		  },
+		  //amd: true
 	      },
 	      files: {
-		  'static/scriptus/sw_handlebars.js' : [ 'static/scriptus/hb/**/*.handlebars']
+		  'src/es6/hb/sw_handlebars.js' : [ 'static/scriptus/hb/**/*.handlebars']
 	      }
 	  }
       },
-
+      webpack: {
+	  storyboard: {
+	      entry: {
+		  storyboard: './src/es6/sw_storyboard.js'
+	      },
+	      output: {
+		  path: 'static/scriptus/js',
+		  filename: '[name].bundle.js'
+	      },
+	      module: {
+		  loaders: [
+		      {
+			  test: /\.js$/,
+			  exclude: /node_modules/,
+			  loader: 'babel-loader',
+		      },
+		      {
+			  test: /\.handlebars$/,
+			  loader: 'handlebars-loader?helperDirs[]=' + __dirname + 'src/es6/filters'
+		      }
+		  ]
+	      },
+	      //devtool: '#inline-source-map'
+	      
+	  }
+	  /*	  options: {
+	      transform: [
+		  ['babelify', {
+		      
+		      sourceMap: true,
+		      presets: ['babel-preset-es2015']
+		  }]
+	  ]},
+	  dist: {
+	      files: [{
+		  
+		  expand: true,
+		  cwd: 'src/es6',
+		  src: ['*.js'],
+		  dest: 'static/scriptus/js'
+	      }]
+	  }*/
+      },
+      traceur: {
+	  options: {
+      // traceur options here
+	      experimental: true,
+	      
+	      // module naming options,
+	      moduleNaming: {
+		  stripPrefix: 'static/scriptus/js',
+		  addPrefix: 'scriptus'
+	      },
+	      copyRuntime: 'static/scriptus/js'
+	  },
+	  custom: {
+	      files: [{
+		  expand: true,
+		  cwd: 'src/es6',
+		  src: ['**/*.js'],
+		  dest: 'static/scriptus/js'
+	      }]
+	  }
+      },
     clean: {
       files: ['dist']
     },
@@ -50,7 +111,7 @@ module.exports = function(grunt) {
       dist: {
         src: ['src/jquery.<%= pkg.name %>.js'],
         dest: 'dist/jquery.<%= pkg.name %>.js'
-      },
+      }
     },
     uglify: {
       options: {
@@ -59,7 +120,7 @@ module.exports = function(grunt) {
       dist: {
         src: '<%= concat.dist.dest %>',
         dest: 'dist/jquery.<%= pkg.name %>.min.js'
-      },
+      }
     },
     qunit: {
       files: ['test/**/*.html']
@@ -76,9 +137,13 @@ module.exports = function(grunt) {
       },
       test: {
         src: ['test/**/*.js']
-      },
+      }
     },
-    watch: {
+	  watch: {
+	      scripts: {
+		  files: 'src/es6/**.js',
+		  tasks: ['browserify']
+	      },
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
@@ -102,7 +167,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
-  // Default task.
+grunt.loadNpmTasks('grunt-traceur');
+grunt.loadNpmTasks('grunt-webpack');
+    // Default task.
   grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
 
 };

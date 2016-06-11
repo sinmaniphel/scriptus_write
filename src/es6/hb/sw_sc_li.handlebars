@@ -1,0 +1,23 @@
+<a class="list-group-item sw_dated_scene_item sw_scene_item"
+  data-scid="{{ id }}"
+  data-title="{{ scene_title }}"
+  {{#if scene.timeframe.tf_start }}
+  data-start="{{ timeframe.tf_start }}"
+  data-end="{{ timeframe.tf_end }}"
+  {{/if}}
+  data-url="{{ url }}"
+  >
+      
+  <h4 class="list-group-item-heading">{{ scene_title}}</h4>
+  <p class="list-group-item-text">
+    {{#if timeframe.tf_start }}
+      Start : {{formatDate timeframe.tf_start day="numeric" month="long" year="numeric" hour="numeric" minute="numeric"}}
+      <br/>
+      End : {{formatDate timeframe.tf_end day="numeric" month="long" year="numeric" hour="numeric" minute="numeric"}}
+      
+      {{else}}
+      Not dated yet
+      {{/if}}
+      
+  </p>
+</a>

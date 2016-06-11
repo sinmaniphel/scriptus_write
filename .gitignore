@@ -63,7 +63,6 @@ target/
 
 # node etc
 libs/
-src/
 node_modules
 
 # vendors
