@@ -14,27 +14,7 @@ module.exports = function(grunt) {
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
       handlebars: {
-	  all: {
-	      
-	      options: {
-		  namespace: function(filename) {
-		      var root = filename.replace("static/scriptus/hb","");
-		      var fname = root.replace(/(.*)\.handlebars/, '$1');		   var l_ns = fname.split('/');
-		      l_ns.pop();
-		      var p_name = "ScriptusTemplates"+l_ns.join('.');
-		      return p_name;
-		  },
-		  processName: function(filepath) {
-		      var last_part = filepath.split('/').pop();
-		      var t_name = last_part.split('.')[0]
-		      return t_name;
-		  },
-		  //amd: true
-	      },
-	      files: {
-		  'src/es6/hb/sw_handlebars.js' : [ 'static/scriptus/hb/**/*.handlebars']
-	      }
-	  }
+	  
       },
       webpack: {
 	  storyboard: {
@@ -45,6 +25,10 @@ module.exports = function(grunt) {
 		  path: 'static/scriptus/js',
 		  filename: '[name].bundle.js'
 	      },
+	      externals: {
+		 //'restle': 'restle',
+		 // 'js-cookie': 'Cookies'
+	      },
 	      module: {
 		  loaders: [
 		      {
@@ -54,52 +38,14 @@ module.exports = function(grunt) {
 		      },
 		      {
 			  test: /\.handlebars$/,
-			  loader: 'handlebars-loader?helperDirs[]=' + __dirname + 'src/es6/filters'
+			  loader: 'handlebars-loader'
 		      }
 		  ]
 	      },
-	      //devtool: '#inline-source-map'
+	      devtool: '#source-map'
 	      
 	  }
-	  /*	  options: {
-	      transform: [
-		  ['babelify', {
-		      
-		      sourceMap: true,
-		      presets: ['babel-preset-es2015']
-		  }]
-	  ]},
-	  dist: {
-	      files: [{
-		  
-		  expand: true,
-		  cwd: 'src/es6',
-		  src: ['*.js'],
-		  dest: 'static/scriptus/js'
-	      }]
-	  }*/
-      },
-      traceur: {
-	  options: {
-      // traceur options here
-	      experimental: true,
-	      
-	      // module naming options,
-	      moduleNaming: {
-		  stripPrefix: 'static/scriptus/js',
-		  addPrefix: 'scriptus'
-	      },
-	      copyRuntime: 'static/scriptus/js'
-	  },
-	  custom: {
-	      files: [{
-		  expand: true,
-		  cwd: 'src/es6',
-		  src: ['**/*.js'],
-		  dest: 'static/scriptus/js'
-	      }]
-	  }
-      },
+      },	 
     clean: {
       files: ['dist']
     },
@@ -141,7 +87,7 @@ module.exports = function(grunt) {
     },
 	  watch: {
 	      scripts: {
-		  files: 'src/es6/**.js',
+		  files: 'src/es6/**/*.js',
 		  tasks: ['browserify']
 	      },
       gruntfile: {

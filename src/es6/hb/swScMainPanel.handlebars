@@ -5,9 +5,9 @@
   <div class="panel-body" id="sc_date_content" >
     {{#if timeframe.tf_start }}
        
-      <span class="label label-success" id="sc_dt_start">{{formatDate timeframe.tf_start day="numeric" month="short" year="numeric" hour="numeric" minute="numeric"}}
+      <span class="label label-success" id="sc_dt_start">{{ timeframe.tf_start }}
       </span>
-      <span class="label label-danger" id="sc_dt_end">{{formatDate timeframe.tf_end day="numeric" month="short" year="numeric" hour="numeric" minute="numeric"}}
+      <span class="label label-danger" id="sc_dt_end">{{ timeframe.tf_end }}
       </span>
 
     {{else}}

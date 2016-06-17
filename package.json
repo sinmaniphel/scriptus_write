@@ -31,6 +31,10 @@
     "bower-requirejs": "^1.2.0",
     "grunt-traceur": "^0.5.5",
     "handlebars-intl": "^1.1.2",
+    "jquery": "^3.0.0",
+    "js-cookie": "^2.1.2",
+    "node-rest-client": "^1.8.0",
+    "restler": "^3.4.0",
     "traceur": "0.0.111",
     "vis": "^4.16.1"
   }
