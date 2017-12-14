@@ -43,11 +43,11 @@ class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class GenderSerializer(serializers.HyperlinkedModelSerializer):
+class GenderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gender
-        exclude = ('story',)
+        exclude = ('story','id')
 
 
 class CharacterSerializer(serializers.HyperlinkedModelSerializer):
@@ -61,10 +61,20 @@ class CharacterSerializer(serializers.HyperlinkedModelSerializer):
                   'chara_nickname', 'chara_gender')
 
     def get_description(self, obj):
+        try:
+            obj.description
         #story = obj.story
         # fs = fsmanager.ScriptusFsProject(story.base_uri)
-        return fsmanager.get_string_content(obj.description)
+        except AttributeError:
+            return ""
+        else:
+            return fsmanager.get_string_content(obj.description)
 
+class CharacterSummarySerializer(serializers.ModelSerializer):
+    chara_gender = GenderSerializer
+    class Meta:
+        model = Character
+        fields = ['chara_whole_name','chara_gender']
 
 class SceneSerializer(serializers.HyperlinkedModelSerializer):
 

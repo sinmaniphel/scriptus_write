@@ -90,6 +90,7 @@ export class StoryBoardManager {
 
   redrawScene (sceneObj) {
     let scene = sceneObj.result
+    console.log(scene)
     // load the panel handlebar template
     var tempScPanel = swScMainPanel
     var html = tempScPanel(scene)

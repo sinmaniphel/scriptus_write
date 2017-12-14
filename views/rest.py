@@ -10,6 +10,7 @@ from scriptus_write.models import Gender
 from scriptus_write.rest_serializers import SceneSerializer
 from scriptus_write.rest_serializers import TimeFrameSerializer
 from scriptus_write.rest_serializers import CharacterSerializer
+from scriptus_write.rest_serializers import CharacterSummarySerializer
 from scriptus_write.rest_serializers import GenderSerializer
 
 from scriptus_write.rest_pagers import AllPagesNumbersPagination
@@ -81,9 +82,16 @@ class SceneViewSet(viewsets.ModelViewSet):
         url = "{}?scene={}".format(r_url,
                                    scene.id)
 
+        charDatList = []
+        for chara in charas:
+            #print(chara.character.chara_whole_name)
+            dat = CharacterSummarySerializer(chara.character, context={'request': request}).data
+            charDatList.append(dat)
         characters = {'count': len(charas),
-                      'url': url
+                      'url': url,
+                      'list': charDatList
                       }
+
         ret['characters'] = characters
         return Response(ret)
 
