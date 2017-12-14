@@ -37,8 +37,10 @@ class ContentSerializer(serializers.HyperlinkedModelSerializer):
 
 class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
 
+
     class Meta:
         model = TimeFrame
+        fields = '__all__'
 
 
 class GenderSerializer(serializers.HyperlinkedModelSerializer):

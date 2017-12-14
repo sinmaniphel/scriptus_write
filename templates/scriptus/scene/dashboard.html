@@ -10,7 +10,7 @@
 {% block sw_extra_head %}
 <link rel="stylesheet" type="text/css" href="{% static 'vendor/vis/dist/vis.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'scriptus/css/sw_storyboard.css' %}" />
- <link rel="stylesheet" href="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" />
 <!-- link rel="stylesheet" type="text/css" href="{% static 'vendor/bootcards/dist/css/bootcards-android.min.css' %}" /-->
 <link rel="stylesheet" type="text/css" href="{% static 'vendor/sweetalert/dist/sweetalert.css' %}">
 {% endblock %}
@@ -27,13 +27,13 @@
 	<div class="list-group" id="scene_list">
 	  <li class="list-group-item" id="sw_sc_buttons">
 	  </li>
-	  
-	  <li class="list-group-item" id="sw_sc_controls">     
+
+	  <li class="list-group-item" id="sw_sc_controls">
 	    <div class="input-group">
 	      <span class="input-group-addon glyphicon glyphicon-search" id="basic-addon1"></span>
-	      <input type="text" class="form-control" placeholder="Scene name..." aria-describedby="basic-addon1" onkeyup="sb_manager.filter_list(this)"></input>
+	      <input id="scTitleFilterField" type="text" class="form-control" placeholder="Scene name..." aria-describedby="basic-addon1" ></input>
 	    </div>
-	     
+
 	  </li>
 	  <li class="list-group-item text-center" id="sw_sc_pagination">
 	     <ul class="pagination" id="sw_sc_pager">
@@ -46,7 +46,7 @@
 	     data-end="{{ scene.timeframe.tf_end }}"
 	     data-url="{% url 'scene-detail' scene.id  %}"}
 	     >
-      
+
             <h4 class="list-group-item-heading">{{scene.scene_title}}</h4>
             <p class="list-group-item-text">
 	      Start : {{ scene.timeframe.tf_start }} - End : {{ scene.timeframe.tf_end }}
@@ -58,7 +58,7 @@
 	     data-scid="{{ scene.id }}"
 	     data-url="{% url 'scene_json' %}"}
 	     >
-      
+
             <h4 class="list-group-item-heading">{{scene.scene_title}}</h4>
             <p class="list-group-item-text">No time yet</p>
 	  </a>
@@ -69,7 +69,7 @@
   </div>
   <div class="col-sm-7">
     {% with scenes.timed|first as fst_scene %}
-    
+
     <div class="panel panel-default" id="sc_main_panel">
     </div>
     {% endwith %}
@@ -88,7 +88,9 @@
 
 
 <!--script src="{% static 'scriptus/sw_handlebars.js' %}" ></script-->
+<script type="text/javascript" src="{% static 'vendor/moment/min/moment.min.js' %}"></script>
 
+ <script type="text/javascript" src="{% static '/vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
 
 
 <!-- main script content -->

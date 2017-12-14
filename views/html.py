@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import transaction
 
 from scriptus_write.forms import UploadFileForm

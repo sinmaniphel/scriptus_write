@@ -1,8 +1,6 @@
-'use strict';
+'use strict'
 
-
-module.exports = function(grunt) {
-
+module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -13,39 +11,57 @@ module.exports = function(grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
-      handlebars: {
-	  
-      },
-      webpack: {
-	  storyboard: {
-	      entry: {
-		  storyboard: './src/es6/sw_storyboard.js'
-	      },
-	      output: {
-		  path: 'static/scriptus/js',
-		  filename: '[name].bundle.js'
-	      },
-	      externals: {
-		 //'restle': 'restle',
-		 // 'js-cookie': 'Cookies'
-	      },
-	      module: {
-		  loaders: [
-		      {
-			  test: /\.js$/,
-			  exclude: /node_modules/,
-			  loader: 'babel-loader',
-		      },
-		      {
-			  test: /\.handlebars$/,
-			  loader: 'handlebars-loader'
-		      }
-		  ]
-	      },
-	      devtool: '#source-map'
-	      
-	  }
-      },	 
+    handlebars: {
+
+    },
+    webpack: {
+      storyboard: {
+        entry: ['./src/ts/sw_storyboard.ts'],
+        output: {
+          path: 'static/scriptus/js',
+          // path: 'dist',
+          filename: 'storyboard.bundle.js'
+        },
+        node: {
+          fs: 'empty',
+          net: 'empty',
+          tls: 'empty'
+        },
+        resolve: {
+       // Add '.ts' and '.tsx' as resolvable extensions.
+          extensions: ['', '.ts', '.tsx', '.js', '.json', '.handlebars'],
+          modulesDirectories: ['node_modules', './src']
+        },
+        externals: {
+          jquery: 'jQuery'
+        },
+        stats: {
+          colors: true,
+          modules: true,
+          reasons: true,
+          errorDetails: true
+        },
+        module: {
+          rules: [
+
+            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+            { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+          ],
+          loaders: [
+//   {
+// test: /\.js$/,
+// exclude: /node_modules/,
+// loader: 'babel-loader',
+//   },
+        // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+          { test: /\.handlebars$/, loader: 'handlebars-loader' },
+
+          { test: /\.ts?$/, loader: 'awesome-typescript-loader' }
+          ]
+        },
+        devtool: 'source-map'
+      }
+    },
     clean: {
       files: ['dist']
     },
@@ -106,16 +122,15 @@ module.exports = function(grunt) {
   });
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
-grunt.loadNpmTasks('grunt-traceur');
-grunt.loadNpmTasks('grunt-webpack');
+  grunt.loadNpmTasks('grunt-contrib-clean')
+  grunt.loadNpmTasks('grunt-contrib-concat')
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-contrib-qunit')
+  grunt.loadNpmTasks('grunt-contrib-jshint')
+  grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-contrib-handlebars')
+  grunt.loadNpmTasks('grunt-traceur')
+  grunt.loadNpmTasks('grunt-webpack')
     // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
-
-};
+    grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify'])
+}
