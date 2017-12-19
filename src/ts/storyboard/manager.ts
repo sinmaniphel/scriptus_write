@@ -3,12 +3,13 @@ import * as $ from 'jquery'
 import { SweetAlertManager } from '../utils/sweet'
 
 import { SceneService } from '../rest/services'
-import { Scene } from '../rest/scene'
-import { SceneParameters} from '../rest/scene'
-import { getSceneSurroundingTime } from '../rest/scene'
+import { RemoteSceneListResult} from '../rest/services'
+import { Scene } from '../model/scene'
+import { SceneParameters} from '../rest/json_model'
 
 import { TimeLineManager } from './timeline'
 
+var formatDate = require('../hb/helpers/formatDate')
 
 var swScMainPanel = require('../hb/swScMainPanel.handlebars')
 var swScLi = require('../hb/swScLi.handlebars')
@@ -50,7 +51,9 @@ export class StoryBoardManager {
 
   refreshList() {
     this._sceneService.list(this.filterMode).then(
-      this.redrawSceneList.bind(this)
+      sceneList => {
+        this.redrawSceneList(sceneList)
+      }
     )
   }
 
@@ -77,6 +80,7 @@ export class StoryBoardManager {
     }
 
     this.filterMode['scene_title'] = value
+    delete this.filterMode['page']
     this.refreshList()
     //this.ajax.ajax_list_scenes(
       //this.url,
@@ -88,9 +92,8 @@ export class StoryBoardManager {
     this._sceneService.detail(sceneId).then(this.redrawScene.bind(this))
   }
 
-  redrawScene (sceneObj) {
-    let scene = sceneObj.result
-    console.log(scene)
+  redrawScene (sceneObj:Scene) {
+    let scene = sceneObj
     // load the panel handlebar template
     var tempScPanel = swScMainPanel
     var html = tempScPanel(scene)
@@ -110,15 +113,15 @@ export class StoryBoardManager {
 
     // zoom on scene in timeline
     // TODO Maybe an event hook ?
-    if (scene.start) {
+    if (scene.timeframe.start) {
       this._tlManager.timeline.fit(scene.id)
       this._tlManager.timeline.setSelection(scene.id)
-      let surroundingTime = getSceneSurroundingTime(scene)
+      let surroundingTime = scene.timeframe.surroundingTime
       this._tlManager.timeline.setWindow(
 	surroundingTime.lower,
 	surroundingTime.upper
       )
-      this._tlManager.timeline.setCurrentTime(scene.start)
+      this._tlManager.timeline.setCurrentTime(scene.timeframe.start)
     } else {
       // picker.data("DateTimePicker").date(d_time)
       this.__setupDtPicker(scene)
@@ -169,9 +172,9 @@ export class StoryBoardManager {
      */
   }
 
-  redrawSceneList (sceneList) {
-    let scenes:Scene[] = sceneList.result.results
-    let pages = sceneList.result.links
+  redrawSceneList (sceneList:RemoteSceneListResult) {
+    let scenes:Scene[] = sceneList.scenes
+    //let pages = sceneList.result.links
     var sceneItemTmpl = swScLi
 
     // fetching the container for the list
@@ -205,7 +208,7 @@ export class StoryBoardManager {
     var buttons = $(buttonsTemplate(buttonsContext))
     var btLi = $('#sw_sc_buttons')
     btLi.html(buttons)
-    var fMode = this.filterMode
+    var fMode:SceneParameters = this.filterMode
 
     // adding behaviour
     var btFilters = btLi.find('.sc-filter-mode')
@@ -214,23 +217,23 @@ export class StoryBoardManager {
 	// ask to redraw list on filter
 	// binding to this guarantees that the context
 	// will be the story board manager
-        var handlerFunc = __this.redrawSceneList.bind(__this)
         $(this).click(
           function () {
  // each button contains a data-mode attribute
-          var mode = $(this).data('mode')
-
-          if (mode) {
-            fMode['timed'] = mode
-          } else {
-    // except for one, which is default status
-          delete fMode['timed']
-        }
+            var mode = $(this).data('mode')
+            if (mode) {
+              __this.filterMode['timed'] = mode
+            } else {
+      // except for one, which is default status
+              delete __this.filterMode['timed']
+            }
+            // the result count can be modified, and so the page may be undefined
+            delete __this.filterMode.page
 
   // actual call to the ajax service
-        __this.refreshList()
-      }
-	)
+          __this.refreshList()
+          }
+	       )
       }
     )
      /*
@@ -242,7 +245,7 @@ export class StoryBoardManager {
      * add behaviour to pager links
      */
     var pagerTemplate = swScPg
-    var pager = $(pagerTemplate(sceneList.result))
+    var pager = $(pagerTemplate(sceneList))
     var pgUl = $('#sw_sc_pager')
     pgUl.html(pager)
     var ctrls = pgUl.find('.sw_sc_pg_ctrl')
@@ -252,13 +255,14 @@ export class StoryBoardManager {
 	// links are generated with a data-url attribute
 	// this attribute is provided by the rest service
 	// as scene.url
-        var url = $(this).data('url')
-        var handlerFunc = __this.redrawSceneList.bind(__this)
         $(this).click(
-function () {
-  __this.refreshList()
-	}
-	)
+          function () {
+            let page = $(this).data('page')
+            __this.filterMode['page'] = page
+
+            __this.refreshList()
+	         }
+	        )
       }
     )
 
@@ -270,7 +274,7 @@ function () {
       var item = $(sceneItemTmpl(scene))
       item.scene = scene
       container.append(item)
-      if (firstItem === undefined && scene.start) {
+      if (firstItem === undefined && scene.timeframe) {
         firstItem = item
       }
       // on click on an item in the list

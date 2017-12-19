@@ -2,9 +2,10 @@
   <li class="previous" ">
     <a id="sw_sc_prev"
       class="sw_sc_pg_ctrl"
-      data-url="{{ previous }}"
+      data-title="{{ previous.title }}"
+      data-timed="{{ previous.timed}}"
       >
-    
+
     {{else}}
     <li class="disabled">
       <a >
@@ -12,10 +13,11 @@
       <span aria-hidden="true">&laquo;</span></a>
     </li>
 
-    {{#each links }}
-      
+    {{#each pages }}
+
       <li>
-        <a data-url="{{ this.url }}"
+        <a
+          data-page="{{page}}"
           class="sw_sc_pg_ctrl"
           >
           {{ this.page }}
@@ -23,20 +25,20 @@
       </li>
 
     {{/each}}
-    
+
 {{#if next }}
   <li class="next"
      >
      <a id="sw_sc_next"
-       data-url="{{ next }}"
-       class="sw_sc_pg_ctrl">
-    
-   
+     data-title="{{ next.title }}"
+     data-timed="{{ next.timed}}"
+     class="sw_sc_pg_ctrl">
+
+
     {{else}}
     <li class="disabled">
       <a id="sw_sc_next">
 {{/if}}
-     
+
             <span aria-hidden="true">&raquo;</span></a>
   </li>
-
