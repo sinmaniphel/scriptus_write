@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+stats
 build/
 develop-eggs/
 dist/
@@ -23,6 +24,9 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+static/scriptus/js
+static/scriptus/vendor
+static/script
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -63,7 +67,6 @@ target/
 
 # node etc
 libs/
-src/
 node_modules
 
 # vendors
@@ -71,3 +74,6 @@ static/vendor
 
 # backups
 *~
+
+# database
+*.db

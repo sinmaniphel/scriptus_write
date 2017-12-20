@@ -1,0 +1,15 @@
+<div class="panel-heading">
+    <h3 class="panel-title" id="scene_title">Characters</h3>
+    </h3>
+</div>
+<ul class="list-group">
+ {{#each result }}
+     <li class="list-group-item" id="sc_pl_ch_cnt" >
+       <details>
+       <summary>
+       <span class="badge">{{ chara_gender.gender_name }}</span>
+       {{ chara_whole_name }}</summary>
+       </details>
+    </li>
+ {{/each}}
+</ul>

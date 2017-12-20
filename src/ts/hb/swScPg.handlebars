@@ -1,0 +1,44 @@
+{{#if previous }}
+  <li class="previous" ">
+    <a id="sw_sc_prev"
+      class="sw_sc_pg_ctrl"
+      data-title="{{ previous.title }}"
+      data-timed="{{ previous.timed}}"
+      >
+
+    {{else}}
+    <li class="disabled">
+      <a >
+{{/if}}
+      <span aria-hidden="true">&laquo;</span></a>
+    </li>
+
+    {{#each pages }}
+
+      <li>
+        <a
+          data-page="{{page}}"
+          class="sw_sc_pg_ctrl"
+          >
+          {{ this.page }}
+        </a>
+      </li>
+
+    {{/each}}
+
+{{#if next }}
+  <li class="next"
+     >
+     <a id="sw_sc_next"
+     data-title="{{ next.title }}"
+     data-timed="{{ next.timed}}"
+     class="sw_sc_pg_ctrl">
+
+
+    {{else}}
+    <li class="disabled">
+      <a id="sw_sc_next">
+{{/if}}
+
+            <span aria-hidden="true">&raquo;</span></a>
+  </li>

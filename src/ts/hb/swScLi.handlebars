@@ -1,0 +1,22 @@
+<a class="list-group-item sw_dated_scene_item sw_scene_item"
+  data-scid="{{ id }}"
+  data-title="{{ title }}"
+  {{#if start }}
+  data-start="{{ start }}"
+  data-end="{{ end }}"
+  {{/if}}
+  >
+
+  <h4 class="list-group-item-heading">{{ title }}</h4>
+  <p class="list-group-item-text">
+    {{#if timeframe.start }}
+      Start : {{ timeframe.prettyStart }}
+      <br/>
+      End : {{ timeframe.prettyEnd }}
+
+      {{else}}
+      Not dated yet
+      {{/if}}
+
+  </p>
+</a>

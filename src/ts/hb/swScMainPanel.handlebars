@@ -1,0 +1,37 @@
+  <div class="panel-heading">
+    <h3 class="panel-title" id="scene_title">{{ title }}
+    </h3>
+  </div>
+  <div class="panel-body" id="sc_date_content" >
+    {{#if timeframe.start }}
+
+      <span class="label label-success" id="sc_dt_start">{{ timeframe.prettyStart }}
+      </span>
+      <span class="label label-danger" id="sc_dt_end">{{ timeframe.prettyEnd }}
+      </span>
+
+    {{else}}
+       <div class='input-group date'
+        id='sc_datetimepicker'
+        >
+        <input type='text' class="form-control" />
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+      </div>
+
+   {{/if}}
+  </div>
+  <li class="list-group-item">
+   {{#each characters }}
+       <!--li id="sc_pl_ch_cnt" -->
+         <span class="btn btn-default btn-xs"><span class="badge">{{ genderSign }}</span>
+         {{ wholeName }}</span>
+      <!--/li-->
+   {{/each}}</li>
+    <li class="list-group-item" id="scene_content">
+      <details>
+      <summary>Show scene text</summary>
+      {{{ description }}}
+      </detail>
+  </ul>

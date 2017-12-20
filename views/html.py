@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import transaction
 
 from scriptus_write.forms import UploadFileForm
@@ -40,6 +40,9 @@ def show_storyboard(request):
     return render(request,
                   'scriptus/scene/dashboard.html',
                   {'story': Story.objects.get(pk=1).title})
+
+def characters(request):
+    return render(request, "scriptus/character/index.html")
 
 
 def handle_uploaded_osb_file(dbfile, name):

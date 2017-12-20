@@ -6,6 +6,9 @@ from scriptus_write.utils import fsmanager
 from scriptus_write.models import Scene
 from scriptus_write.models import Content
 from scriptus_write.models import TimeFrame
+from scriptus_write.models import Character
+from scriptus_write.models import SceneCharacter
+from scriptus_write.models import Gender
 
 import datetime as dt
 
@@ -34,9 +37,44 @@ class ContentSerializer(serializers.HyperlinkedModelSerializer):
 
 class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
 
+
     class Meta:
         model = TimeFrame
+        fields = '__all__'
 
+
+class GenderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Gender
+        exclude = ['story']
+
+
+class CharacterSerializer(serializers.HyperlinkedModelSerializer):
+
+    description = serializers.SerializerMethodField()
+    chara_gender = GenderSerializer()
+
+    class Meta:
+        model = Character
+        fields = ('description', 'chara_whole_name',
+                  'chara_nickname', 'chara_gender')
+
+    def get_description(self, obj):
+        try:
+            obj.description
+        #story = obj.story
+        # fs = fsmanager.ScriptusFsProject(story.base_uri)
+        except AttributeError:
+            return ""
+        else:
+            return fsmanager.get_string_content(obj.description)
+
+class CharacterSummarySerializer(serializers.ModelSerializer):
+    chara_gender = GenderSerializer()
+    class Meta:
+        model = Character
+        fields = ['chara_whole_name','chara_gender']
 
 class SceneSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -54,7 +92,8 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Scene
         fields = ('url', 'id', 'scene_title', 'description', 'start',
-                  'end', 'dt_start', 'dt_end', 'content', 'status', 'timeframe')
+                  'end', 'dt_start', 'dt_end', 'content', 'status',
+                  'timeframe')
 
     def update(self, scene, validated_data):
         print(validated_data)
@@ -76,8 +115,6 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
         timeframe.save()
 
     def get_description(self, obj):
-        #story = obj.story
-        # fs = fsmanager.ScriptusFsProject(story.base_uri)
         return fsmanager.get_string_content(obj.description)
 
     def get_start(self, obj):

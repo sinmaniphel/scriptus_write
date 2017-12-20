@@ -277,7 +277,7 @@ var StoryBoardManager = function () {
 
 exports.default = StoryBoardManager;
 
-},{"../utils/django":5,"../utils/sweet":6,"./sb_ajax.js":2,"./timeline":3}],2:[function(require,module,exports){
+},{"../utils/django":4,"../utils/sweet":5,"./sb_ajax.js":2,"./timeline":3}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -436,19 +436,6 @@ exports.default = TimeLineManager;
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var _manager = require('./storyboard/manager');
-
-var _manager2 = _interopRequireDefault(_manager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var list_url = $('#scene-service-url').data('url');
-var sb_manager = new _manager2.default(list_url);
-sb_manager.init();
-
-},{"./storyboard/manager":1}],5:[function(require,module,exports){
-'use strict';
-
 Object.defineProperty(exports, "__esModule", {
 			value: true
 });
@@ -525,7 +512,7 @@ var SWDjangoUtils = function () {
 
 exports.default = SWDjangoUtils;
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -578,4 +565,4 @@ var SweetAlertManager = function () {
 
 exports.default = SweetAlertManager;
 
-},{}]},{},[4]);
+},{}]},{},[1]);

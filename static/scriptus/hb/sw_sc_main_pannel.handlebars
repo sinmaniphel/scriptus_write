@@ -23,6 +23,17 @@
    {{/if}}
   </div>
   <ul class="list-group">
+    <li class="list-group-item"
+      id="sc_pl_ch_cnt"
+      data-url="{{ characters.url }}"
+      <span class="badge">{{ characters.count }}</span>
+      Characters
+    </li>
+  </ul>    
+  <ul class="list-group">
     <li class="list-group-item" id="scene_content">
+      <details>
+      <summary>Show scene text</summary>
       {{{ description }}}
+      </detail>
   </ul>    

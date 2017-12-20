@@ -1,11 +1,6 @@
-'use strict';
+'use strict'
 
-var Handlebars     = require('handlebars');
-var HandlebarsIntl = require('handlebars-intl');
-HandlebarsIntl.registerWith(Handlebars);
-
-module.exports = function(grunt) {
-
+module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -16,29 +11,63 @@ module.exports = function(grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
-      handlebars: {
-	  all: {
-	      
-	      options: {
-		  namespace: function(filename){
-		      var root = filename.replace("static/scriptus/hb","");
-		      var fname = root.replace(/(.*)\.handlebars/, '$1');		   var l_ns = fname.split('/');
-		      l_ns.pop();
-		      var p_name = "ScriptusTemplates"+l_ns.join('.');
-		      return p_name;
-		  },
-		  processName: function(filepath) {
-		      var last_part = filepath.split('/').pop();
-		      var t_name = last_part.split('.')[0]
-		      return t_name;
-		  },
-	      },
-	      files: {
-		  'static/scriptus/sw_handlebars.js' : [ 'static/scriptus/hb/**/*.handlebars']
-	      }
-	  }
-      },
+    handlebars: {
 
+    },
+    webpack: {
+      storyboard: {
+        entry: {
+          storyboard: './src/ts/sw_storyboard.ts',
+          charindex: './src/ts/character/sw_ch_index.ts'
+        },
+        output: {
+          path: 'static/scriptus/js',
+          // path: 'dist',
+          filename: '[name].bundle.js'
+        },
+        node: {
+          fs: 'empty',
+          net: 'empty',
+          tls: 'empty'
+        },
+        resolve: {
+       // Add '.ts' and '.tsx' as resolvable extensions.
+          extensions: ['', '.ts', '.tsx', '.js', '.json', '.handlebars'],
+          modulesDirectories: ['node_modules', './src']
+        },
+        externals: {
+          jquery: 'jQuery'
+        },
+        stats: {
+          colors: true,
+          modules: false,
+          reasons: false,
+          errorDetails: true
+        },
+        module: {
+          rules: [
+
+            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+            { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+          ],
+          loaders: [
+        // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+            {
+              test: /\.handlebars$/,
+              loader: 'handlebars-loader',
+              query: {
+                precompileOptions: {
+                  knownHelpersOnly: false
+                }
+              }
+            },
+
+          { test: /\.ts?$/, loader: 'awesome-typescript-loader' }
+          ]
+        },
+        devtool: 'source-map'
+      }
+    },
     clean: {
       files: ['dist']
     },
@@ -50,7 +79,7 @@ module.exports = function(grunt) {
       dist: {
         src: ['src/jquery.<%= pkg.name %>.js'],
         dest: 'dist/jquery.<%= pkg.name %>.js'
-      },
+      }
     },
     uglify: {
       options: {
@@ -59,7 +88,7 @@ module.exports = function(grunt) {
       dist: {
         src: '<%= concat.dist.dest %>',
         dest: 'dist/jquery.<%= pkg.name %>.min.js'
-      },
+      }
     },
     qunit: {
       files: ['test/**/*.html']
@@ -76,9 +105,13 @@ module.exports = function(grunt) {
       },
       test: {
         src: ['test/**/*.js']
-      },
+      }
     },
-    watch: {
+	  watch: {
+	      scripts: {
+		  files: 'src/es6/**/*.js',
+		  tasks: ['browserify']
+	      },
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
@@ -95,14 +128,15 @@ module.exports = function(grunt) {
   });
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
-  // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
-
-};
+  grunt.loadNpmTasks('grunt-contrib-clean')
+  grunt.loadNpmTasks('grunt-contrib-concat')
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-contrib-qunit')
+  grunt.loadNpmTasks('grunt-contrib-jshint')
+  grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-contrib-handlebars')
+  grunt.loadNpmTasks('grunt-traceur')
+  grunt.loadNpmTasks('grunt-webpack')
+    // Default task.
+    grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify'])
+}

@@ -2,7 +2,7 @@
 import json
 import datetime as dt
 from scriptus_write.utils import fsmanager as fs
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 __one_hour_dt = dt.timedelta(0, 3600)
