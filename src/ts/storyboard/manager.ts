@@ -9,7 +9,6 @@ import { SceneParameters} from '../rest/json_model'
 
 import { TimeLineManager } from './timeline'
 
-var formatDate = require('../hb/helpers/formatDate')
 
 var swScMainPanel = require('../hb/swScMainPanel.handlebars')
 var swScLi = require('../hb/swScLi.handlebars')
