@@ -3,6 +3,7 @@ import * as json from './json_model'
 import * as bld from './builder'
 
 import { Scene } from '../model/scene'
+import { Character } from '../model/character'
 
 import * as rest from 'typed-rest-client/RestClient';
 import * as qs from 'query-string'
@@ -97,4 +98,25 @@ export class SceneService extends BaseService {
       }
     );
   }
+}
+
+export class CharacterService extends BaseService {
+  constructor (restApiRoot) {
+    super(restApiRoot)
+  }
+
+  async list():Promise<Character[]> {
+    let jCharResp:rest.IRestResponse<json.JsonCharacter[]> = await this._rest.get<json.JsonCharacter[]>(this.baseUrl)
+    let chars:Character[] = []
+    for(let jChar of jCharResp.result) {
+      chars.push(bld.buildCharacter(jChar))
+    }
+
+    return new Promise<Character[]> (
+      (resolve, reject) => {
+        resolve(chars)
+      }
+    )
+  }
+
 }

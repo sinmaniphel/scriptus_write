@@ -1,0 +1,75 @@
+{% extends 'scriptus/sw_base.html' %}
+{% load bootstrap3 %}
+{# Load CSS and JavaScript #}
+
+{% load sw_extra %}
+{# Load the remaining static files #}
+{% load staticfiles %}
+
+{% load templatetag_handlebars %}
+{% block sw_extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'scriptus/css/sw_storyboard.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'scriptus/css/common.css' %}" />
+
+{% endblock %}
+{% block sw_content %}
+<div class="row sw_sb_content">
+  <h1>Characters for story {{story}}</h1>
+</div>
+<div class="row">
+  <div class="col-sm-3">
+    <div class="panel panel-default" id="sc_char_panel">
+      <div class="panel-heading">
+        <h3 class="panel-title" id="scene_title">Filters</h3>
+      </div>
+      <ul class="list-group">
+            <li class="list-group-item">
+              <div class="dropdown">
+                <h4>Gender</h4>
+                <button
+                class="btn btn-default dropdown-toggle  "
+                type="button"
+                id="chGenderDropdown"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="true">
+                  All
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="#">Male</a></li>
+                  <li><a href="#">Female</a></li>
+                  <li><a href="#">All</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <h4>Category</h4>
+              <div class="checkbox">
+                <label><input type="checkbox" value=""/>Cat 1</label>
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" value=""/>Cat 2</label>
+              </div>
+            </li>
+        </ul>
+
+    </div>
+  </div>
+  <div class="col-sm-9">
+    <div class="panel panel-default" id="sc_char_panel">
+      <div class="panel-heading">
+        <h3 class="panel-title" id="scene_title">Characters list</h3>
+      </div>
+      <ul class="list-group" id="swChList">
+
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block bootstrap3_extra_script %}
+<script src="{% static 'scriptus/js/charindex.bundle.js' %}" type="text/javascript" charset="utf-8" ></script>
+
+{% endblock %}

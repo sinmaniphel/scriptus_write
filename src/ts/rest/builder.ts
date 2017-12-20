@@ -37,7 +37,7 @@ export function buildScene(jScene:json.JsonScene):Scene {
 }
 
 export function buildCharacter(jChar:json.JsonCharacter):Character {
-  var chRet:Character = new Character(jChar.chara_whole_name, jChar.chara_gender)
+  var chRet:Character = new Character(jChar.chara_whole_name, jChar.chara_gender.id)
   chRet.description = jChar.description
   return chRet
 }

@@ -1,6 +1,3 @@
-var http = require('http')
-console.log('version')
-console.log(process.version)
 
 import { StoryBoardManager } from './storyboard/manager'
 import * as $ from 'jquery'

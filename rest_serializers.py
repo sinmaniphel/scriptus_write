@@ -47,7 +47,7 @@ class GenderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gender
-        exclude = ('story','id')
+        exclude = ['story']
 
 
 class CharacterSerializer(serializers.HyperlinkedModelSerializer):
@@ -71,7 +71,7 @@ class CharacterSerializer(serializers.HyperlinkedModelSerializer):
             return fsmanager.get_string_content(obj.description)
 
 class CharacterSummarySerializer(serializers.ModelSerializer):
-    chara_gender = GenderSerializer
+    chara_gender = GenderSerializer()
     class Meta:
         model = Character
         fields = ['chara_whole_name','chara_gender']

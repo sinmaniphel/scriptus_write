@@ -16,11 +16,14 @@ module.exports = function (grunt) {
     },
     webpack: {
       storyboard: {
-        entry: ['./src/ts/sw_storyboard.ts'],
+        entry: {
+          storyboard: './src/ts/sw_storyboard.ts',
+          charindex: './src/ts/character/sw_ch_index.ts'
+        },
         output: {
           path: 'static/scriptus/js',
           // path: 'dist',
-          filename: 'storyboard.bundle.js'
+          filename: '[name].bundle.js'
         },
         node: {
           fs: 'empty',
@@ -37,8 +40,8 @@ module.exports = function (grunt) {
         },
         stats: {
           colors: true,
-          modules: true,
-          reasons: true,
+          modules: false,
+          reasons: false,
           errorDetails: true
         },
         module: {
@@ -48,11 +51,6 @@ module.exports = function (grunt) {
             { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
           ],
           loaders: [
-//   {
-// test: /\.js$/,
-// exclude: /node_modules/,
-// loader: 'babel-loader',
-//   },
         // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
             {
               test: /\.handlebars$/,

@@ -41,6 +41,9 @@ def show_storyboard(request):
                   'scriptus/scene/dashboard.html',
                   {'story': Story.objects.get(pk=1).title})
 
+def characters(request):
+    return render(request, "scriptus/character/index.html")
+
 
 def handle_uploaded_osb_file(dbfile, name):
     importer = osb.OStoryBookLoader()

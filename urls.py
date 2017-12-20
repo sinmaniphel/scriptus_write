@@ -16,6 +16,7 @@ router.register(r'genders', rest.GenderViewSet)
 
 urlpatterns = [
     url(r'^$', html.index, name='index'),
+    url(r'^characters/', html.characters, name='characters'),
     url(r'^import_os/', html.import_ostorybook, name='import_osb'),
     url(r'^storyboard/', html.show_storyboard, name='show_storyboard'),
     url(r'^rest/', include(router.urls)),

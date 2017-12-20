@@ -40,8 +40,13 @@ export interface JsonSceneCharacters extends JsonObject {
 
 export interface JsonCharacter {
   chara_whole_name:string
-  chara_gender:number
+  chara_gender:JsonGender
   description?:string
+}
+
+export interface JsonGender {
+  id:number,
+  gender_name:string
 }
 
 export interface SceneParameters {
