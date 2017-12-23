@@ -1,19 +1,20 @@
 # import json
 
 
-from scriptus_write.models import Scene
-from scriptus_write.models import TimeFrame
-from scriptus_write.models import Character
-from scriptus_write.models import SceneCharacter
-from scriptus_write.models import Gender
+from scriptus_write.model.story import Scene
+from scriptus_write.model.story import TimeFrame
+from scriptus_write.model.story import Character
+from scriptus_write.model.story import SceneCharacter
+from scriptus_write.model.story import Gender
 
-from scriptus_write.rest_serializers import SceneSerializer
-from scriptus_write.rest_serializers import TimeFrameSerializer
-from scriptus_write.rest_serializers import CharacterSerializer
-from scriptus_write.rest_serializers import CharacterSummarySerializer
-from scriptus_write.rest_serializers import GenderSerializer
+from scriptus_write.rest.serializers import SceneSerializer
+from scriptus_write.rest.serializers import TimeFrameSerializer
+from scriptus_write.rest.serializers import CharacterSerializer
+from scriptus_write.rest.serializers import CharacterSummarySerializer
+from scriptus_write.rest.serializers import GenderSerializer
+from scriptus_write.rest.serializers import UserSerializer, GroupSerializer
 
-from scriptus_write.rest_pagers import AllPagesNumbersPagination
+from scriptus_write.rest.pagers import AllPagesNumbersPagination
 
 from scriptus_write.filters import SceneFilter
 from scriptus_write.filters import CharacterFilter
@@ -26,7 +27,6 @@ from django_filters import rest_framework as filters
 from rest_framework.reverse import reverse
 
 
-from scriptus_write.rest_serializers import UserSerializer, GroupSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

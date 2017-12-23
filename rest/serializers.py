@@ -3,12 +3,12 @@ from rest_framework import serializers
 
 from scriptus_write.utils import fsmanager
 
-from scriptus_write.models import Scene
-from scriptus_write.models import Content
-from scriptus_write.models import TimeFrame
-from scriptus_write.models import Character
-from scriptus_write.models import SceneCharacter
-from scriptus_write.models import Gender
+from scriptus_write.model.story import Scene
+from scriptus_write.model.story import Content
+from scriptus_write.model.story import TimeFrame
+from scriptus_write.model.story import Character
+from scriptus_write.model.story import SceneCharacter
+from scriptus_write.model.story import Gender
 
 import datetime as dt
 

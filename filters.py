@@ -1,9 +1,9 @@
 from django_filters import rest_framework as r_filters
 #from rest_framework import filters as r_filters
 
-from scriptus_write.models import Scene
-from scriptus_write.models import Character
-from scriptus_write.models import SceneCharacter
+from scriptus_write.model.story import Scene
+from scriptus_write.model.story import Character
+from scriptus_write.model.story import SceneCharacter
 
 
 class SceneFilter(r_filters.FilterSet):
