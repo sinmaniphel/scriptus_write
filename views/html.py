@@ -7,8 +7,8 @@ from scriptus_write.utils import ostorybook as osb
 from scriptus_write.utils import visutils as vis
 from scriptus_write.utils import fsmanager as fs
 
-from scriptus_write.models import Scene
-from scriptus_write.models import Story
+from scriptus_write.model.story import Scene
+from scriptus_write.model.story import Story
 
 import datetime as dt
 

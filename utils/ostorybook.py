@@ -1,4 +1,4 @@
-import scriptus_write.models as mods
+import scriptus_write.model.story as mods
 import sqlite3
 import tempfile
 import shutil

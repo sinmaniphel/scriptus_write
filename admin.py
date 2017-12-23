@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Gender, Character, Location, Artifact, Scene, TimeFrame, Idea, Content, Story, SceneCharacter
+from .model.story import Gender, Character, Location, Artifact, Scene, TimeFrame, Idea, Content, Story, SceneCharacter
 
 admin.site.register(TimeFrame)
 admin.site.register(Gender)

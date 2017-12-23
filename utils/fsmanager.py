@@ -1,5 +1,7 @@
+from django.contrib.auth.models import User
 from django.conf import settings
 from enum import Enum
+from dulwich.repo import Repo
 import os
 
 
@@ -29,6 +31,8 @@ class ScriptusFsProject:
         if mk_dir is True:
             if not os.path.exists(s_proj_root):
                 os.makedirs(s_proj_root)
+        # initializing the project as a git repo
+        repo = Repo.init(s_proj_root)
         project = ScriptusFsProject(s_proj_root)
         project.init()
         return project
@@ -37,6 +41,8 @@ class ScriptusFsProject:
         self.project_root = f_root
         self._injoin = lambda f: os.path.join(f_root, f)
         self._join = lambda f1, f2: os.path.join(f1, f2)
+
+        self.repo = Repo(self.project_root)
 
         self.chapters = self._injoin("chapter")
         self.ideas = self._injoin("idea")
@@ -99,3 +105,6 @@ class ScriptusFsProject:
     def save_file(self, f_target, content):
         with open(f_target, "w") as target:
             target.write(content)
+
+    def stage_file(self, f_target, comment):
+        self.repo
