@@ -1,10 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
-from scriptus_write.utils import fsmanager
-
 from scriptus_write.model.story import Scene
-from scriptus_write.model.story import Content
 from scriptus_write.model.story import TimeFrame
 from scriptus_write.model.story import Character
 from scriptus_write.model.story import SceneCharacter
@@ -29,12 +26,6 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
-class ContentSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Content
-
-
 class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
 
 
@@ -52,7 +43,7 @@ class GenderSerializer(serializers.ModelSerializer):
 
 class CharacterSerializer(serializers.HyperlinkedModelSerializer):
 
-    description = serializers.SerializerMethodField()
+    # description = serializers.SerializerMethodField()
     chara_gender = GenderSerializer()
 
     class Meta:
@@ -60,15 +51,15 @@ class CharacterSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('description', 'chara_whole_name',
                   'chara_nickname', 'chara_gender')
 
-    def get_description(self, obj):
-        try:
-            obj.description
-        #story = obj.story
-        # fs = fsmanager.ScriptusFsProject(story.base_uri)
-        except AttributeError:
-            return ""
-        else:
-            return fsmanager.get_string_content(obj.description)
+    # def get_description(self, obj):
+    #     try:
+    #         obj.description
+    #     #story = obj.story
+    #     # fs = fsmanager.ScriptusFsProject(story.base_uri)
+    #     except AttributeError:
+    #         return ""
+    #     else:
+    #         return fsmanager.get_string_content(obj.description)
 
 class CharacterSummarySerializer(serializers.ModelSerializer):
     chara_gender = GenderSerializer()
@@ -78,12 +69,12 @@ class CharacterSummarySerializer(serializers.ModelSerializer):
 
 class SceneSerializer(serializers.HyperlinkedModelSerializer):
 
-    description = serializers.SerializerMethodField()
+    #description = serializers.SerializerMethodField()
     start = serializers.SerializerMethodField()
     end = serializers.SerializerMethodField()
     dt_start = serializers.SerializerMethodField()
     dt_end = serializers.SerializerMethodField()
-    content = serializers.SerializerMethodField()
+    #content = serializers.SerializerMethodField()
 
     timeframe = TimeFrameSerializer()
     # scene_detail = serializers.HyperlinkedRelatedField(
@@ -92,7 +83,7 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Scene
         fields = ('url', 'id', 'scene_title', 'description', 'start',
-                  'end', 'dt_start', 'dt_end', 'content', 'status',
+                  'end', 'dt_start', 'dt_end', 'status',
                   'timeframe')
 
     def update(self, scene, validated_data):
@@ -114,14 +105,14 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
                                                                  3600)
         timeframe.save()
 
-    def get_description(self, obj):
-        return fsmanager.get_string_content(obj.description)
+    # def get_description(self, obj):
+    #     return fsmanager.get_string_content(obj.description)
 
     def get_start(self, obj):
         return obj.timeframe.tf_start
 
-    def get_content(self, obj):
-        return obj.scene_title
+    # def get_content(self, obj):
+    #     return obj.scene_title
 
     def get_end(self, obj):
         return obj.timeframe.tf_end

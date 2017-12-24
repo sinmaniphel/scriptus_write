@@ -4,7 +4,7 @@ import tempfile
 import shutil
 import logging
 import datetime as dt
-from .fsmanager import ScriptusFsProject
+#from .fsmanager import ScriptusFsProject
 # from django.utils import text as dtu
 
 
@@ -35,7 +35,6 @@ class OStoryBookLoader:
 
     def __init__(self):
         self.__connection = None
-        self.__filesystem = None
 
     def import_from_sqlite(self, sqlite_dbfile, pname):
         tmp_dbfile = handle_uploaded_db_file(sqlite_dbfile)
@@ -45,10 +44,9 @@ class OStoryBookLoader:
             detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
         self.__connection.row_factory = sqlite3.Row
 
-        self.__filesystem = ScriptusFsProject.create_from_name(pname)
+
 
         self.story = mods.Story(
-            base_uri=self.__filesystem.project_root,
             title=pname,
             shortname=pname)
         self.story.save()
@@ -70,21 +68,24 @@ class OStoryBookLoader:
         self.__connection.close()
         return self
 
-    def _create_content(self,
-                        obj,
-                        objname,
-                        call_func,
-                        notes,
-                        description):
-        f_notes, f_description = call_func(objname)
-        self.__filesystem.save_file(f_notes,
-                                    notes.replace('\\n', '')
-                                    )
-        self.__filesystem.save_file(f_description,
-                                    description.replace('\\n', ''))
+    def clean_content(self,text):
+        return text.replace('\\n','')
 
-        obj.description = self._new_content(f_description, objname)
-        obj.notes = self._new_content(f_notes, objname)
+    # def _create_content(self,
+    #                     obj,
+    #                     objname,
+    #                     call_func,
+    #                     notes,
+    #                     description):
+    #     f_notes, f_description = call_func(objname)
+    #     self.__filesystem.save_file(f_notes,
+    #
+    #                                 )
+    #     self.__filesystem.save_file(f_description,
+    #                                 description.replace('\\n', ''))
+    #
+    #     obj.description = self._new_content(f_description, objname)
+    #     obj.notes = self._new_content(f_notes, objname)
 
     def import_artifacts(self):
         c_arts = self.__connection.cursor()
@@ -98,12 +99,9 @@ class OStoryBookLoader:
             artifact.art_name = r_artifact['NAME']
             s_art_desc = r_artifact['DESCRIPTION']
             s_art_note = r_artifact['NOTES']
-            self._create_content(
-                artifact,
-                "artifact#{}".format(r_artifact['ID']),
-                self.__filesystem.get_artifact,
-                s_art_note,
-                s_art_desc)
+            artifact.description = self.clean_content(s_art_desc)
+            artifact.notes = self.clean_content(s_art_note)
+
             l_arts[r_artifact['ID']] = artifact
             artifact.save()
         c_arts.close()
@@ -127,12 +125,8 @@ class OStoryBookLoader:
                                   chapter.chap_title)
             s_chap_desc = r_chapter['DESCRIPTION']
             s_chap_note = r_chapter['NOTES']
-            self._create_content(
-                chapter,
-                name,
-                self.__filesystem.get_chapter,
-                s_chap_note,
-                s_chap_desc)
+            chapter.description = self.clean_content(s_chap_desc)
+            chapter.note = self.clean_content(s_chap_note)
             l_chaps.append(chapter)
             chapter.save()
         c_chap.close()
@@ -174,13 +168,8 @@ class OStoryBookLoader:
             notes = r_char['NOTES']
             description = r_char['DESCRIPTION']
 
-            self._create_content(
-                char,
-                nickname,
-                self.__filesystem.get_character,
-                notes,
-                description)
-
+            char.notes = self.clean_content(notes)
+            char.description = self.clean_content(description)
             chars[r_char['ID']] = char
             char.save()
             i = i + 1
@@ -188,13 +177,6 @@ class OStoryBookLoader:
         c_char.close()
         return chars
 
-    def _new_content(self, u_cont, name):
-        cont = mods.Content()
-        cont.cont_description = "Imported from oStoryBook for {}".format(name)
-        cont.cont_name = name
-        cont.cont_url = u_cont
-        cont.save()
-        return cont
 
     def _import_genders(self):
         c_gender = self.__connection.cursor()
@@ -225,12 +207,8 @@ class OStoryBookLoader:
                                   r_idea['ID'])
             s_idea_desc = ""
             s_idea_note = r_idea['NOTE']
-            self._create_content(
-                idea,
-                name,
-                self.__filesystem.get_idea,
-                s_idea_note,
-                s_idea_desc)
+            idea.notes = self.clean_content(s_idea_note)
+            idea.description = s_idea_desc
             l_ideas.append(idea)
             idea.save()
         c_idea.close()
@@ -273,12 +251,8 @@ class OStoryBookLoader:
             location.loc_longitude = 0
             s_location_desc = r_location['DESCRIPTION']
             s_location_note = r_location['NOTES']
-            self._create_content(
-                location,
-                "location-{}".format(loc_id),
-                self.__filesystem.get_location,
-                s_location_note,
-                s_location_desc)
+            location.description = self.clean_content(s_location_desc)
+            location.notes = self.clean_content(s_location_note)
             self._add_loc_time_frame(location, loc_id)
             l_locations[r_location['ID']] = location
             location.save()
@@ -300,13 +274,10 @@ class OStoryBookLoader:
             s_scene_desc = r_scene['SUMMARY']
             s_scene_note = r_scene['NOTES']
             i_scene_id = r_scene['ID']
+            scene.notes = self.clean_content(s_scene_note)
+            scene.description = self.clean_content(s_scene_desc)
             d_time = r_scene['SCENE_TS']
-            self._create_content(
-                scene,
-                "scene-{}".format(i_scene_id),
-                self.__filesystem.get_scene,
-                s_scene_note,
-                s_scene_desc)
+
             self._add_scene_time_frame(scene, d_time, i_scene_id)
             l_scenes[i_scene_id] = scene
             scene.save()
@@ -323,14 +294,10 @@ class OStoryBookLoader:
             strand = mods.Strand()
             strand.story = self.story
             strand.strand_name = r_strand['NAME']
-            s_strand_desc = ""
+
             s_strand_note = r_strand['NOTES']
-            self._create_content(
-                strand,
-                r_strand['ABBREVIATION'],
-                self.__filesystem.get_strand,
-                s_strand_note,
-                s_strand_desc)
+            strand.notes = self.clean_content(s_strand_note)
+            strand.desc = ""
             l_strands[r_strand['ID']] = strand
             strand.save()
         c_strand.close()

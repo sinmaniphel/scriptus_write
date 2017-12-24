@@ -1,7 +1,7 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from .model.story import Gender, Character, Location, Artifact, Scene, TimeFrame, Idea, Content, Story, SceneCharacter
+from .model.story import Gender, Character, Location, Artifact, Scene, TimeFrame, Idea, Story, SceneCharacter
 
 @admin.register(TimeFrame)
 class TimeFrameAdmin(VersionAdmin):

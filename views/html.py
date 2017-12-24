@@ -5,11 +5,10 @@ from django.db import transaction
 from scriptus_write.forms import UploadFileForm
 from scriptus_write.utils import ostorybook as osb
 from scriptus_write.utils import visutils as vis
-from scriptus_write.utils import fsmanager as fs
 
 from scriptus_write.model.story import Scene
 from scriptus_write.model.story import Story
-
+from reversion import views as rv_view
 import datetime as dt
 
 
@@ -21,6 +20,7 @@ def index(request):
 
 
 @transaction.atomic
+@rv_view.create_revision()
 def import_ostorybook(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
