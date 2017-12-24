@@ -126,3 +126,25 @@ class SceneSerializer(serializers.HyperlinkedModelSerializer):
         if obj.timeframe.tf_start is None:
             return None
         return obj.timeframe.tf_start.date() + dt.timedelta(1)
+
+class VisSerializer(serializers.HyperlinkedModelSerializer):
+
+    start = serializers.SerializerMethodField()
+    end = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Scene
+        fields = ('id', 'content', 'start', 'end')
+        
+    def get_content(self, obj):
+        return obj.scene_title
+
+    def get_start(self, obj):
+        return obj.timeframe.tf_start
+
+    # def get_content(self, obj):
+    #     return obj.scene_title
+
+    def get_end(self, obj):
+        return obj.timeframe.tf_end

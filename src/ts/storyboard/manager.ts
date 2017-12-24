@@ -36,7 +36,7 @@ export class StoryBoardManager {
     // private
     this._sceneService = new SceneService(serviceUrl)
     this._tlManager = new TimeLineManager(
-      serviceUrl + 'all/?timed=timed'
+      serviceUrl
     )
     this._sweetMgr = new SweetAlertManager()
     this.filterMode = {}
