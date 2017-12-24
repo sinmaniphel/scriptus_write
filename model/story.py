@@ -1,10 +1,10 @@
 from django.db import models
-
+import reversion
 # Create your models here.
 
 
+@reversion.register()
 class Story(models.Model):
-    base_uri = models.CharField(max_length=1024)
     title = models.CharField(max_length=1024)
     shortname = models.CharField(max_length=64)
 
@@ -27,24 +27,6 @@ class TimeFrame(models.Model):
     def __str__(self):
         return self.tf_name
 
-
-class Content(models.Model):
-    '''
-    Describes a resource containing HTML
-    Such a source can be hosted by several ways
-    '''
-    cont_description = models.CharField(max_length=512)
-    cont_name = models.CharField(max_length=256)
-
-    '''
-    The actual URL of the content, which will be handled elsewhere
-    '''
-    cont_url = models.CharField(max_length=1024)
-
-    def __str__(self):
-        return self.cont_name
-
-
 class FramedInTime(models.Model):
     timeframe = models.ForeignKey(
         TimeFrame,
@@ -61,11 +43,7 @@ class Annotated(models.Model):
     As such, an Annotated has a "notes" attributes which is a Content
     '''
 
-    notes = models.ForeignKey(Content,
-                              related_name='%(class)s_anno_related',
-                              null=True,
-                              on_delete=models.PROTECT)
-
+    notes = models.TextField()
     class Meta:
         abstract = True
 
@@ -76,10 +54,7 @@ class Described(models.Model):
     notes attached and a description
     '''
 
-    description = models.ForeignKey(Content,
-                                    related_name='%(class)s_desc_related',
-                                    on_delete=models.PROTECT
-                                    )
+    description = models.TextField()
 
     class Meta:
         abstract = True
@@ -98,12 +73,13 @@ class Statused(models.Model):
     class Meta:
         abstract = True
 
-
+@reversion.register()
 class Attribute(StoryBased):
     att_key = models.CharField(max_length=256)
     att_value = models.CharField(max_length=2048)
 
 
+@reversion.register()
 class Chapter(Annotated, Described):
     chap_no = models.IntegerField()
     chap_title = models.CharField(max_length=256)
@@ -111,7 +87,7 @@ class Chapter(Annotated, Described):
     def __str__(self):
         return self.chap_title
 
-
+@reversion.register()
 class Gender(StoryBased):
     gender_name = models.CharField(max_length=32)
 
@@ -119,6 +95,7 @@ class Gender(StoryBased):
         return self.gender_name
 
 
+@reversion.register()
 class Idea(StoryBased, Annotated, Statused):
     idea_name = models.CharField(max_length=1024)
 
@@ -126,6 +103,7 @@ class Idea(StoryBased, Annotated, Statused):
         return self.idea_name
 
 
+@reversion.register()
 class Occupation(StoryBased, Annotated, Described):
     occ_name = models.CharField(max_length=1024)
 
@@ -133,6 +111,7 @@ class Occupation(StoryBased, Annotated, Described):
         return self.occ_name
 
 
+@reversion.register()
 class Character(StoryBased, Annotated, Described, FramedInTime):
 
     chara_whole_name = models.CharField(max_length=512)
@@ -142,7 +121,7 @@ class Character(StoryBased, Annotated, Described, FramedInTime):
     def __str__(self):
         return self.chara_whole_name
 
-
+@reversion.register()
 class Location(StoryBased, Annotated, Described, FramedInTime):
 
     loc_name = models.CharField(max_length=128)
@@ -156,7 +135,7 @@ class Location(StoryBased, Annotated, Described, FramedInTime):
     def __str__(self):
         return self.loc_name
 
-
+@reversion.register()
 class Artifact(StoryBased, Annotated, Described):
 
     art_name = models.CharField(max_length=512)
@@ -164,14 +143,14 @@ class Artifact(StoryBased, Annotated, Described):
     def __str__(self):
         return self.art_name
 
-
+@reversion.register()
 class Strand(StoryBased, Annotated, Described):
     strand_name = models.CharField(max_length=512)
 
     def __str__(self):
         return self.strand_name
 
-
+@reversion.register()
 class Scene(StoryBased, Annotated, Described, FramedInTime, Statused):
     scene_title = models.CharField(max_length=512)
 
@@ -181,7 +160,7 @@ class Scene(StoryBased, Annotated, Described, FramedInTime, Statused):
     def __str__(self):
         return self.scene_title
 
-
+@reversion.register()
 class SceneFrame(models.Model):
     '''
     This one is a bit tricky.
@@ -194,7 +173,7 @@ class SceneFrame(models.Model):
     sf_end_scene = models.ForeignKey(
         Scene, related_name='sc_frame_end_related', on_delete=models.CASCADE)
 
-
+@reversion.register()
 class Part(Annotated):
     part_name = models.CharField(max_length=512)
     part_number = models.IntegerField()
@@ -203,13 +182,13 @@ class Part(Annotated):
 Associations
 '''
 
-
+@reversion.register()
 class CharacterOccupation(Annotated, FramedInTime):
 
     cocc_character = models.ForeignKey(Character, on_delete=models.CASCADE)
     cocc_occupation = models.ForeignKey(Occupation, on_delete=models.CASCADE)
 
-
+@reversion.register()
 class Relationship(Annotated, Described):
     rel_char1 = models.ForeignKey(Character,
                                   related_name="char1_related",
@@ -221,17 +200,17 @@ class Relationship(Annotated, Described):
                                         null=True,
                                         on_delete=models.SET_NULL)
 
-
+@reversion.register()
 class SceneCharacter(models.Model):
     scene = models.ForeignKey(Scene, on_delete=models.CASCADE)
     character = models.ForeignKey(Character, on_delete=models.CASCADE)
 
-
+@reversion.register()
 class SceneStrand(models.Model):
     scene = models.ForeignKey(Scene, on_delete=models.CASCADE)
     strand = models.ForeignKey(Strand, on_delete=models.CASCADE)
 
-
+@reversion.register()
 class SceneLocation(models.Model):
     scene = models.ForeignKey(Scene, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
