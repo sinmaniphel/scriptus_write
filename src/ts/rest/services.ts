@@ -8,6 +8,8 @@ import { Character } from '../model/character'
 import * as rest from 'typed-rest-client/RestClient';
 import * as qs from 'query-string'
 
+import * as vis from 'vis'
+
 export interface RemoteSceneListResult {
   pages:json.SceneParameters[]
   previous?:json.SceneParameters
@@ -87,6 +89,17 @@ export class SceneService extends BaseService {
     })
     // keeping the current page in memory
     return prom
+  }
+
+  async visTimeline():Promise<vis.DataSet<vis.DataItem>> {
+    console.log(this.baseUrl)
+    let sUrl:string = this.baseUrl+'vis_tl'
+    let remoteResult:rest.IRestResponse<vis.DataSet<vis.DataItem>> = await this._rest.get<vis.DataSet<vis.DataItem>>(sUrl)
+    return new Promise<vis.DataSet<vis.DataItem>>(
+      (resolve, reject) => {
+        resolve(remoteResult.result)
+      }
+    );
   }
 
   async detail (id:Number):Promise<Scene> {

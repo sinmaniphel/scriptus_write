@@ -1,5 +1,6 @@
 import { SweetAlertManager } from '../utils/sweet';
-import { SWDjangoUtils } from '../utils/django';
+import { SceneService } from '../rest/services';
+
 import * as vis from 'vis';
 import * as $ from 'jquery';
 
@@ -7,24 +8,20 @@ export class TimeLineManager
 {
  timeline:vis.Timeline
  _timeline_cont:HTMLElement
- service_url:string
+_service:SceneService
  update_hook:Function
  delete_hook:Function
  select_hook:Function
- utils:SWDjangoUtils
  sweet_mgr:SweetAlertManager
  _handle_error:Function
 
  constructor(service_url) {
 	  this.timeline = null;
   	this._timeline_cont = $('#sw_timeline')[0];
-  	this.service_url = service_url;
+  	this._service = new SceneService(service_url);
   	this.update_hook = null;
   	this.delete_hook = null;
   	this.select_hook = null;
-  	this.service_url = service_url;
-
-  	this.utils = new SWDjangoUtils();
   	this.sweet_mgr = new SweetAlertManager();
   }
 
@@ -39,9 +36,10 @@ export class TimeLineManager
   	);
   }
 
-  redraw( data  )
+
+  redraw( data:vis.DataSet<vis.DataItem>  )
     {
-  	var items = new vis.DataSet(data);
+    var items = new vis.DataSet(data)
   	var _this = this;
   	items.on('update', this.update_alert.bind(this));
 
@@ -66,24 +64,10 @@ export class TimeLineManager
   }
 
   refresh_from_server() {
-  	var csrftoken = this.utils.getCsrfToken();
-  	var err_func = this._handle_error;
-  	var handler_func = this.redraw.bind(this);
-  	$.ajax(
-  	    {
-  		url : this.service_url, // the endpoint,commonly same url
-  		type : "GET", // http method
-  		data : { csrfmiddlewaretoken : csrftoken,
-       		       },
-  		success: handler_func,
-  		error: err_func
-  	    }
-  	);
-
-
+    this._service.visTimeline().then((data) => {
+      this.redraw(data)
+    })
   }
-
-
 
 
 }

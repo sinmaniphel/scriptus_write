@@ -7,7 +7,7 @@ from scriptus_write.model.story import Character
 from scriptus_write.model.story import SceneCharacter
 from scriptus_write.model.story import Gender
 
-from scriptus_write.rest.serializers import SceneSerializer
+from scriptus_write.rest.serializers import SceneSerializer, VisSerializer
 from scriptus_write.rest.serializers import TimeFrameSerializer
 from scriptus_write.rest.serializers import CharacterSerializer
 from scriptus_write.rest.serializers import CharacterSummarySerializer
@@ -60,10 +60,10 @@ class SceneViewSet(viewsets.ModelViewSet):
     filter_class = SceneFilter
 
     @list_route()
-    def all(self, request, timed_filtered=True):
+    def vis_tl(self, request, timed_filtered=True):
         timed_scenes = Scene.objects.exclude(timeframe__tf_start__isnull=True)
 
-        serializer = self.get_serializer(timed_scenes, many=True)
+        serializer = VisSerializer(timed_scenes, many=True)
         return Response(serializer.data)
 
     @detail_route()
