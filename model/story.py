@@ -27,24 +27,6 @@ class TimeFrame(models.Model):
     def __str__(self):
         return self.tf_name
 
-
-class Content(models.Model):
-    '''
-    Describes a resource containing HTML
-    Such a source can be hosted by several ways
-    '''
-    cont_description = models.CharField(max_length=512)
-    cont_name = models.CharField(max_length=256)
-
-    '''
-    The actual URL of the content, which will be handled elsewhere
-    '''
-    cont_url = models.CharField(max_length=1024)
-
-    def __str__(self):
-        return self.cont_name
-
-
 class FramedInTime(models.Model):
     timeframe = models.ForeignKey(
         TimeFrame,
@@ -61,11 +43,7 @@ class Annotated(models.Model):
     As such, an Annotated has a "notes" attributes which is a Content
     '''
 
-    notes = models.ForeignKey(Content,
-                              related_name='%(class)s_anno_related',
-                              null=True,
-                              on_delete=models.PROTECT)
-
+    notes = models.TextField()
     class Meta:
         abstract = True
 
@@ -76,11 +54,8 @@ class Described(models.Model):
     notes attached and a description
     '''
 
-    description = models.ForeignKey(Content,
-                                    related_name='%(class)s_desc_related',
-                                    on_delete=models.PROTECT
-                                    )
-
+    description = models.TextField()
+    
     class Meta:
         abstract = True
 
