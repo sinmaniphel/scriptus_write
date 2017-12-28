@@ -21,17 +21,27 @@ export class SweetAlertManager {
         )
     }
 
-    prettyConfirm(title, text, event_type, data, callback) {
+    prettyConfirm(title, text, data, callback,cancel?) {
   	swal(
   	    {
   		title: title,
   		text: text,
   		type: 'warning',
   		showCancelButton: true,
-//  		confirmButtonColor: '#DD6B55'
+  		confirmButtonColor: '#DD6B55'
       }
     ).then(
-		    callback(event_type, data)
+      (result) => {
+        if(result.value) {
+            callback(data)
+        }
+        else {
+          if(cancel) {
+            cancel(data)
+          }
+        }
+      }
+
       )
 	   }
 }

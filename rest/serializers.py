@@ -8,9 +8,23 @@ from scriptus_write.model.story import SceneCharacter
 from scriptus_write.model.story import Gender
 
 import datetime as dt
+import reversion
 
 __one_hour_dt = dt.timedelta(0, 3600)
 
+
+# class ReversionSerializer(serializers.HyperlinkedModelSerializer):
+#     def update(self, instance, validated_data):
+#         with reversion.create_revision():
+#             instance = super().update(instance, validated_data)
+#             reversion.set_user(self.context['request'].user)
+#             return instance
+#
+#     def create(self, validated_data):
+#         with reversion.create_revision():
+#             instance = super().create(validated_data)
+#             reversion.set_user(self.context['request'].user)
+#             return instance
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -28,6 +42,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class TimeFrameSerializer(serializers.HyperlinkedModelSerializer):
 
+    tf_name = serializers.CharField(required=False)
 
     class Meta:
         model = TimeFrame
@@ -136,7 +151,7 @@ class VisSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Scene
         fields = ('id', 'content', 'start', 'end')
-        
+
     def get_content(self, obj):
         return obj.scene_title
 

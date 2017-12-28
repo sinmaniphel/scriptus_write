@@ -7,12 +7,16 @@ import * as $ from 'jquery';
 export class TimeLineManager
 {
  timeline:vis.Timeline
- _timeline_cont:HTMLElement
+ currentDataSet:vis.DataSet
+
+ sweet_mgr:SweetAlertManager
 _service:SceneService
+
+_timeline_cont:HTMLElement
+
  update_hook:Function
  delete_hook:Function
  select_hook:Function
- sweet_mgr:SweetAlertManager
  _handle_error:Function
 
  constructor(service_url) {
@@ -25,31 +29,55 @@ _service:SceneService
   	this.sweet_mgr = new SweetAlertManager();
   }
 
+  cancel(properties) {
+    console.log(properties)
+    //this.currentDataSet.udpate(properties.oldData[0])
+  }
 
+  remoteUpdate(item) {
+    this._service.updateTime(item.id, item.start, item.end).then(
+      (errorCode) => {
+        console.log("return from service")
+        console.log(errorCode)
+      }
+    )
+  }
 
-  update_alert(event, properties) {
-  	var dt = properties.data[0];
-  	var title = "Update scene "+dt.scene_title+" ?";
+  update_alert(item, callback) {
+    var dt = item;
+  	var title = "Update scene "+dt.content+" ?";
   	var text = "Do you really want to update scene ?";
+    var cancel:Function = (data) => {
+      callback(null)
+    }
+    var update:Function = (data) => {
+      callback(data)
+      this.remoteUpdate(data)
+      //this.update_hook(data)
+    }
   	this.sweet_mgr.prettyConfirm(
-  	    title, text, event, properties, this.update_hook
+  	    title, text, item, update, cancel
   	);
+
+    // update the DataSet vis previous item if pretty confirm false
   }
 
 
   redraw( data:vis.DataSet<vis.DataItem>  )
     {
     var items = new vis.DataSet(data)
+    this.currentDataSet = items
   	var _this = this;
-  	items.on('update', this.update_alert.bind(this));
+  	// items.on('update', (event, properties) => {
+    //    this.update_alert(event, properties)
+    // });
 
   	var options = {
-  	    height: '300px',
+  	    height: '600px',
   	    editable: true,
-  	    onUpdate: function(item, callback) {
-  		console.log(item)
-  	    },
-
+        onMove: (item, callback) => {
+          this.update_alert(item, callback)
+        }
 	     };
   	if(this.timeline == undefined) {
   	    this.timeline = new vis.Timeline(this._timeline_cont,
@@ -58,7 +86,8 @@ _service:SceneService
   	}
   	else {
   	    this.timeline.setData(items);
-  	    this.timeline.redraw();
+        this.timeline.setOptions(options)
+        this.timeline.redraw();
   	}
   	return this.timeline;
   }
