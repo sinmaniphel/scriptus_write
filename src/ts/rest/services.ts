@@ -1,11 +1,15 @@
 import { BaseService } from './base_service'
 import * as json from './json_model'
 import * as bld from './builder'
+import { SWDjangoUtils } from '../utils/django'
+
+
 
 import { Scene } from '../model/scene'
 import { Character } from '../model/character'
 
 import * as rest from 'typed-rest-client/RestClient';
+import * as rif from 'typed-rest-client/Interfaces';
 import * as qs from 'query-string'
 
 import * as vis from 'vis'
@@ -29,6 +33,8 @@ export class SceneService extends BaseService {
 
   async list (parameters?:json.SceneParameters):Promise<RemoteSceneListResult> {
     //rm.IRestResponse<Scene>
+
+    // TODO rewrite with a response processor given in options
     let url = this.baseUrl
     if(parameters) {
       url+="?"+qs.stringify(parameters)
@@ -111,6 +117,25 @@ export class SceneService extends BaseService {
       }
     );
   }
+
+  async updateTime(sceneId:Number,start:Date,end:Date) {
+    let sUrl:string = this.baseUrl+sceneId+"/tf_update/"
+    let jTf:json.JsonTimeframe = {
+      tf_start:start.toJSON(),
+      tf_end:end.toJSON()
+    }
+    let options:rest.IRequestOptions = {}
+    let headers:rif.IHeaders =  {}
+    headers['X-CSRFToken'] = this.djangoUtils.getCsrfToken()
+    options.additionalHeaders = headers
+    let remoteResult:rest.IRestResponse<json.JsonScene> = await this._rest.update<json.JsonScene>(sUrl,jTf,options)
+    return new Promise(
+      (resolve, reject) => {
+        resolve(remoteResult.statusCode)
+      }
+    )
+  }
+
 }
 
 export class CharacterService extends BaseService {

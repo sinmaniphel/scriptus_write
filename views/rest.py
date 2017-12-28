@@ -20,12 +20,13 @@ from scriptus_write.filters import SceneFilter
 from scriptus_write.filters import CharacterFilter
 
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from rest_framework.reverse import reverse
 
+from reversion import views as revision
 
 
 
@@ -63,8 +64,22 @@ class SceneViewSet(viewsets.ModelViewSet):
     def vis_tl(self, request, timed_filtered=True):
         timed_scenes = Scene.objects.exclude(timeframe__tf_start__isnull=True)
 
-        serializer = VisSerializer(timed_scenes, many=True)
-        return Response(serializer.data)
+        if request.method == 'GET':
+            serializer = VisSerializer(timed_scenes, many=True)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post','patch'])
+    def tf_update(self, request, pk):
+        scene = self.get_object()
+        data=request.data
+        serializer = TimeFrameSerializer(scene.timeframe, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            serializer.save()
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     @detail_route()
     def detailed(self, request, pk=None):

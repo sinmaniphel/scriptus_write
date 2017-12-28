@@ -56,7 +56,7 @@ export class StoryBoardManager {
     )
   }
 
-
+  
   __getLabel (timeFilter) {
     switch (timeFilter) {
       case 'timed':

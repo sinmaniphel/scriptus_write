@@ -1,18 +1,18 @@
 export interface JsonObject {
-  url:string
+  url?:string
 }
 
 export interface JsonScene extends JsonObject {
   id:number
   scene_title:string
   status:number
-  characters?:JsonSceneCharacters
+  characters:JsonSceneCharacters
   content:string
   description:DOMStringMap
-  start:Date
-  end:Date
-  dt_end:string
-  dt_start:string
+  start?:Date
+  end?:Date
+  dt_end?:string
+  dt_start?:string
   timeframe?:JsonTimeframe
 }
 
@@ -27,10 +27,9 @@ export interface JsonPage extends JsonObject {
 }
 
 export interface JsonTimeframe extends JsonObject {
-  url:string
   tf_end:string
   tf_start:string
-  tf_name:string
+  tf_name?:string
 }
 
 export interface JsonSceneCharacters extends JsonObject {

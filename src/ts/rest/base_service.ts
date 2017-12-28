@@ -14,7 +14,7 @@ export class BaseService {
 
   baseUrl:string
   _rest:rest.RestClient
-
+  djangoUtils:SWDjangoUtils
   /**
    * Default constructor for all the services.
    * @abstract
@@ -25,6 +25,7 @@ export class BaseService {
     let protocol:string = location.protocol
     this.baseUrl = protocol+"//"+host+restApiRoot
     this._rest = new rest.RestClient('scriptus-client', this.baseUrl)
+    this.djangoUtils = new SWDjangoUtils()
     //this._rest = new Proxy(rest, new RestProxyHandler())
   }
 
